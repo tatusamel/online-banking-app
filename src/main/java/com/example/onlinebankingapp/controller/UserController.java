@@ -2,10 +2,7 @@ package com.example.onlinebankingapp.controller;
 
 import com.example.onlinebankingapp.model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.example.onlinebankingapp.service.UserService;
 
 import java.util.List;
@@ -16,7 +13,7 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private final UserService userService;
+    private UserService userService;
 
     public UserController(UserService userService) {this.userService = userService;}
 
@@ -26,9 +23,9 @@ public class UserController {
     @GetMapping("/{userId}")
     public Optional<User> getUserById(@PathVariable Long userId) { return this.userService.getUserById(userId);}
 
-    @GetMapping("/sayHello")
-    public String sayHello(){
-        return "hello world";
+    @PutMapping
+    public User updateUserById(@PathVariable Long userId, @RequestBody User user) {
+        return userService.updateUserById(userId, user);
     }
 
 }

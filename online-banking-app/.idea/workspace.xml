@@ -4,20 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5a055c8-43cb-4070-87b2-f8b4155669a9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/online-banking-app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/online-banking-app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/onlinebankingapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/onlinebankingapp/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/onlinebankingapp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/onlinebankingapp/service/UserService.java" afterDir="false" />
-    </list>
+    <list default="true" id="5b9a1720-ef3d-48bf-a2c2-1d2cbc811c92" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -29,7 +30,7 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectId" id="2PszxqD2tm8Lgu8C7PcSwolkw6h" />
+  <component name="ProjectId" id="2Pt0VD7lnizNh7rwFu5haEEiIS2" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -37,10 +38,14 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/serhatgundem/Java Projects/online-banking-app",
+    "last_opened_file_path": "/Users/serhatgundem/Java Projects/online-banking-app/online-banking-app",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -59,14 +64,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="e5a055c8-43cb-4070-87b2-f8b4155669a9" name="Changes" comment="" />
-      <created>1684260827440</created>
+      <changelist id="5b9a1720-ef3d-48bf-a2c2-1d2cbc811c92" name="Changes" comment="" />
+      <created>1684261091894</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1684260827440</updated>
-      <workItem from="1684260828933" duration="217000" />
-      <workItem from="1684261058259" duration="33000" />
-      <workItem from="1684263326271" duration="2030000" />
+      <updated>1684261091894</updated>
+      <workItem from="1684261092973" duration="2227000" />
     </task>
     <servers />
   </component>
