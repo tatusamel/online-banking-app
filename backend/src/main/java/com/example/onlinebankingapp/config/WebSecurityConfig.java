@@ -1,6 +1,5 @@
 package com.example.onlinebankingapp.config;
 
-import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
