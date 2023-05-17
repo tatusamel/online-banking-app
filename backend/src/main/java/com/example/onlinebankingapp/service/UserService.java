@@ -22,5 +22,19 @@ public class UserService {
 
     public Optional<User> getUserById(Long id) {return userRepository.findById(id);}
 
+    public User updateUserById(Long id, User newUser){
+        Optional<User> user = userRepository.findById(id);
+
+        if ( user.isPresent() ) {
+            User foundUser = user.get();
+            foundUser.setFirstName(newUser.getFirstName());
+            foundUser.setLastName(newUser.getLastName());
+            foundUser.setEmail(newUser.getEmail());
+            foundUser.setPassword(newUser.getPassword());
+            return userRepository.save(foundUser);
+        }
+        return null;
+    }
+
 
 }
