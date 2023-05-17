@@ -29,6 +29,6 @@ public class AccountController {
 
     @PutMapping("/updateAccount")
     public ResponseEntity<Account> updateAccount(@PathVariable Long accountId, @RequestBody AccountRequest accountRequest) {
-        return accountService.up
+        return accountService.updateAccount(accountId, accountRequest);
     }
 }
