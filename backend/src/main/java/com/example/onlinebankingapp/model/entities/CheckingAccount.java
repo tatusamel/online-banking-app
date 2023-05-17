@@ -1,12 +1,10 @@
 package com.example.onlinebankingapp.model.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
+@DiscriminatorValue(value = "CHECKING_ACCOUNT")
 @Data
-public class CheckingAccount  extends BaseAccount {
+public class CheckingAccount extends Account {
 }
