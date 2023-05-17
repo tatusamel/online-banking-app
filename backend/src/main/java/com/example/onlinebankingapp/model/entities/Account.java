@@ -18,12 +18,12 @@ public abstract class Account {
     private String accountNumber;
     private double balance;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Customer.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Branch.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "branch_id")
-    private Branch brach;
-    
+    private Branch branch;
+
 }

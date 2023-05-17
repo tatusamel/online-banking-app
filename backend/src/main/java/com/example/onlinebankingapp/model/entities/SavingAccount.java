@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import lombok.Data;
 
 @Entity
-@DiscriminatorValue(value = "SAVING_ACCOUNT")
+@DiscriminatorValue(value = "SavingAccount")
 @Data
 public class SavingAccount extends Account {
     private double interestRate;

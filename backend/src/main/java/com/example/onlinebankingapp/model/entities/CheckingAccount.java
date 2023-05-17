@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@DiscriminatorValue(value = "CHECKING_ACCOUNT")
+@DiscriminatorValue(value = "CheckingAccount")
 @Data
 public class CheckingAccount extends Account {
 }

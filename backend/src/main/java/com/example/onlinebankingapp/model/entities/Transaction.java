@@ -13,15 +13,15 @@ public class Transaction {
     private double amount;
     private Date date;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = TransactionType.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "transaction_type_id")
     private TransactionType transactionType;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Account.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "from_account_id")
     private Account fromAccount;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Account.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "to_account_id")
     private Account toAccount;
 
