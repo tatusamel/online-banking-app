@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_APPLICATION_JSON: '{
+          "spring.datasource.url"  : "jdbc:mysql://db:3306/$DB_NAME",
+          "spring.datasource.password" : "$DB_PASSWORD"
+        }'
+    networks:
+      - oba-net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8-debian
+    environment:
+      MYSQL_DATABASE: $DB_NAME
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+    ports:
+      - 3306:3306
+    volumes:
+      - oba-db-volume:/var/lib/mysql
+    networks:
+      - oba-net
+    healthcheck:
+      test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES;"
+      interval: 2s
+      timeout: 2s
+      retries: 10
+
+networks:
+  oba-net:
+
+volumes:
+  oba-db-volume:
