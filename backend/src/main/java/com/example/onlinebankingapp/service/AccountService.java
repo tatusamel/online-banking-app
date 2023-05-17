@@ -60,7 +60,37 @@ public class AccountService {
         newAccount.setCustomer(customer.get());
         newAccount.setBalance(accountRequest.getBalance());
 
-        return new ResponseEntity<>(accountRepository.save(newAccount),HttpStatus.OK);
+        return new ResponseEntity<>(accountRepository.save(newAccount),HttpStatus.CREATED);
 
     }
+
+    public ResponseEntity<Account> updateAccount(Long accountId, AccountRequest accountRequest) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        Optional<Customer> customer = customerRepository.findById(accountRequest.getCustomerId());
+        Optional<Branch> branch = branchRepository.findById(accountRequest.getBranchId());
+
+        if ( account.isEmpty() || customer.isEmpty() || branch.isEmpty() ) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        Account accountToUpdate = account.get();
+
+        accountToUpdate.setBalance(accountRequest.getBalance());
+        accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
+        accountToUpdate.setCustomer(customer.get());
+        accountToUpdate.setBranch(branch.get());
+
+        return new ResponseEntity<>(accountRepository.save(accountToUpdate), HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<Account> deleteAccount(Long accountId) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        if ( account.isEmpty() ) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        accountRepository.delete(account.get());
+        return new ResponseEntity<>(null, HttpStatus.OK);
+
+    }
+
 }

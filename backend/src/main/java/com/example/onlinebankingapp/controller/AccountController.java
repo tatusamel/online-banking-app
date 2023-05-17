@@ -6,9 +6,7 @@ import com.example.onlinebankingapp.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +23,12 @@ public class AccountController {
     }
 
     @PostMapping("/insertAccount")
-    public ResponseEntity<Account> insertAccount(AccountRequest accountRequest) {
+    public ResponseEntity<Account> insertAccount(@RequestBody AccountRequest accountRequest) {
         return accountService.insertAccount(accountRequest);
+    }
+
+    @PutMapping("/updateAccount")
+    public ResponseEntity<Account> updateAccount(@PathVariable Long accountId, @RequestBody AccountRequest accountRequest) {
+        return accountService.up
     }
 }
