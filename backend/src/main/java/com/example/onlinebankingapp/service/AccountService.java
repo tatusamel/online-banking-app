@@ -6,6 +6,8 @@ import com.example.onlinebankingapp.model.repositories.AccountRepository;
 import com.example.onlinebankingapp.model.repositories.BranchRepository;
 import com.example.onlinebankingapp.model.repositories.CustomerRepository;
 import com.example.onlinebankingapp.model.requests.AccountRequest;
+import com.example.onlinebankingapp.model.requests.CreditCardAccountRequest;
+import com.example.onlinebankingapp.model.requests.SavingAccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,14 @@ public class AccountService {
         return new ResponseEntity<>(accountRepository.findAll(), HttpStatus.OK);
     }
 
+    public ResponseEntity<Account> getAccountById(Long accountId) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        if ( account.isEmpty() ) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(account.get(), HttpStatus.OK);
+    }
+
     public ResponseEntity<Account> insertAccount(AccountRequest accountRequest) {
         Long customerId = accountRequest.getCustomerId();
         Long branchId = accountRequest.getBranchId();
@@ -42,19 +52,7 @@ public class AccountService {
 
         if ( customer.isEmpty() || branch.isEmpty() ) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-        Account newAccount;
-        AccountType accountType = accountRequest.getAccountType();
-
-        if ( accountType.equals( AccountType.CheckingAccount )) {
-            newAccount = new CheckingAccount();
-        }else if ( accountType.equals( AccountType.SavingAccount )) {
-            newAccount = new SavingAccount();
-        }else if ( accountType.equals( AccountType.CreditCardAccount)) {
-            newAccount = new CreditCardAccount();
-        }else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
+        Account newAccount = new Account();
         newAccount.setAccountNumber(accountRequest.getAccountNumber());
         newAccount.setBranch(branch.get());
         newAccount.setCustomer(customer.get());
@@ -84,12 +82,12 @@ public class AccountService {
 
     }
 
-    public ResponseEntity<Account> deleteAccount(Long accountId) {
+    public ResponseEntity<Void> deleteAccount(Long accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
-        if ( account.isEmpty() ) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if ( account.isEmpty() ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         accountRepository.delete(account.get());
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 

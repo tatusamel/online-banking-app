@@ -23,7 +23,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public Optional<User> getUserById(@PathVariable Long userId) { return this.userService.getUserById(userId);}
 
-    @PutMapping
+    @PutMapping("/update/{userId}")
     public User updateUserById(@PathVariable Long userId, @RequestBody User user) {
         return userService.updateUserById(userId, user);
     }

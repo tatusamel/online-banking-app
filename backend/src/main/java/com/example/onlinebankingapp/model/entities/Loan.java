@@ -16,7 +16,7 @@ public class Loan {
     private Date startDate;
     private Date endDate;
 
-    @ManyToOne(targetEntity = Account.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Account.class)
     @JoinColumn(name = "account_id")
     private Account account;
 }
