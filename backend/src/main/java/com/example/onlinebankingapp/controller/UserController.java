@@ -2,6 +2,7 @@ package com.example.onlinebankingapp.controller;
 
 import com.example.onlinebankingapp.model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.onlinebankingapp.service.UserService;
 

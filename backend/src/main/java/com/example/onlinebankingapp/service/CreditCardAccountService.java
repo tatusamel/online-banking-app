@@ -20,16 +20,18 @@ import java.util.Optional;
 @Service
 public class CreditCardAccountService {
 
-    @Autowired
     private CreditCardAccountRepository creditCardAccountRepository;
-    @Autowired
     private BranchRepository branchRepository;
 
-    @Autowired
     private CustomerRepository customerRepository;
 
-    public CreditCardAccountService(CreditCardAccountRepository creditCardAccountRepository) {
+    @Autowired
+    public CreditCardAccountService(CreditCardAccountRepository creditCardAccountRepository,
+                                    BranchRepository branchRepository,
+                                    CustomerRepository customerRepository) {
         this.creditCardAccountRepository = creditCardAccountRepository;
+        this.branchRepository = branchRepository;
+        this.customerRepository = customerRepository;
     }
 
     public ResponseEntity<List<CreditCardAccount>> listAllAccounts() {

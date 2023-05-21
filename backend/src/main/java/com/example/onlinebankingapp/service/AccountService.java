@@ -19,16 +19,19 @@ import java.util.Optional;
 @Service
 public class AccountService {
 
-    @Autowired
     private AccountRepository accountRepository;
-    @Autowired
     private BranchRepository branchRepository;
 
-    @Autowired
     private CustomerRepository customerRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    @Autowired
+    public AccountService(AccountRepository accountRepository,
+                          BranchRepository branchRepository,
+                          CustomerRepository customerRepository)
+    {
         this.accountRepository = accountRepository;
+        this.branchRepository = branchRepository;
+        this.customerRepository = customerRepository;
     }
 
     public ResponseEntity<List<Account>> listAllAccounts() {

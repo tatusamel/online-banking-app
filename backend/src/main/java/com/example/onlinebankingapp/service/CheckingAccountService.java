@@ -20,13 +20,11 @@ import java.util.Optional;
 @Service
 public class CheckingAccountService {
 
-    @Autowired
     private CheckingAccountRepository checkingAccountRepository;
-    @Autowired
     private BranchRepository branchRepository;
-    @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
     public CheckingAccountService( CheckingAccountRepository checkingAccountRepository,
                                    BranchRepository branchRepository,
                                    CustomerRepository customerRepository) {
