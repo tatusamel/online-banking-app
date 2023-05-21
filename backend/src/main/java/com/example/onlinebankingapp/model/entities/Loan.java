@@ -1,10 +1,12 @@
 package com.example.onlinebankingapp.model.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
 
 @Entity
+@Data
 public class Loan {
 
     @Id
