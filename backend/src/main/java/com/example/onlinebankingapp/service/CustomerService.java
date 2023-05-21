@@ -9,31 +9,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
+    @Autowired
     public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<List<Customer>> listAllCustomers() {
-        return new ResponseEntity<>(customerRepository.findAll(), HttpStatus.OK);
+    public List<Customer> listAllCustomers() {
+        return customerRepository.findAll();
     }
 
-    public ResponseEntity<Customer> getCustomerById(Long customerId) {
-        Optional<Customer> customer = customerRepository.findById(customerId);
-        if ( customer.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(customer.get(), HttpStatus.FOUND);
+    public Customer getCustomerById(Long customerId) {
+        return customerRepository.findById(customerId)
+                .orElseThrow( () -> new NoSuchElementException("No Customer with id: " + customerId));
+
     }
 
-    public ResponseEntity<Customer> insertCustomer(CustomerRequest customerRequest) {
+    public Customer insertCustomer(CustomerRequest customerRequest) {
         Customer newCustomer = new Customer();
 
         newCustomer.setFirstName(customerRequest.getFirstName());
@@ -42,17 +41,13 @@ public class CustomerService {
         newCustomer.setPhone(customerRequest.getPhone());
         newCustomer.setAddress(customerRequest.getAddress());
 
-        return new ResponseEntity<>(customerRepository.save(newCustomer), HttpStatus.CREATED);
+        return customerRepository.save(newCustomer);
     }
 
-    public ResponseEntity<Customer> updateCustomer(Long customerId, CustomerRequest customerRequest) {
-        Optional<Customer> customer = customerRepository.findById(customerId);
+    public Customer updateCustomer(Long customerId, CustomerRequest customerRequest) {
 
-        if (customer.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        Customer customerToUpdate = customer.get();
+        Customer customerToUpdate = customerRepository.findById(customerId)
+                        .orElseThrow( () -> new NoSuchElementException("No Customer with id: "+ customerId));
 
         customerToUpdate.setFirstName(customerRequest.getFirstName());
         customerToUpdate.setLastName(customerRequest.getLastName());
@@ -60,15 +55,13 @@ public class CustomerService {
         customerToUpdate.setPhone(customerRequest.getPhone());
         customerToUpdate.setAddress(customerRequest.getAddress());
 
-        return new ResponseEntity<>(customerRepository.save(customerToUpdate), HttpStatus.OK);
+        return customerRepository.save(customerToUpdate);
     }
 
-    public ResponseEntity<Void> deleteCustomer(Long customerId) {
-        Optional<Customer> customer = customerRepository.findById(customerId);
-        if (customer.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        customerRepository.delete(customer.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public void deleteCustomer(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                        .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + customerId ));
+        customerRepository.delete(customer);
     }
 
 }

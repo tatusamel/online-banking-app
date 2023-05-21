@@ -9,60 +9,51 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class BranchService {
 
-    @Autowired
-    private BranchRepository branchRepository;
+    private final BranchRepository branchRepository;
 
+    @Autowired
     public BranchService(BranchRepository branchRepository) {
         this.branchRepository = branchRepository;
     }
 
-    public ResponseEntity<List<Branch>> listAllBranches() {
-        return new ResponseEntity<>(branchRepository.findAll(), HttpStatus.OK);
+    public List<Branch> listAllBranches() {
+        return branchRepository.findAll();
     }
 
-    public ResponseEntity<Branch> getBranchById(Long branchId) {
-        Optional<Branch> branch = branchRepository.findById(branchId);
-        if ( branch.isEmpty() ) {
-            return new ResponseEntity<> (null, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(branch.get(), HttpStatus.OK);
+    public Branch getBranchById(Long branchId) {
+        return branchRepository.findById(branchId)
+                .orElseThrow( () -> new NoSuchElementException("No Branch with id: " + branchId));
     }
 
-    public ResponseEntity<Branch> insertBranch(BranchRequest branchRequest) {
+    public Branch insertBranch(BranchRequest branchRequest) {
         Branch newBranch = new Branch();
 
         newBranch.setName(branchRequest.getName());
         newBranch.setAddress(branchRequest.getAddress());
 
-        return new ResponseEntity<>(branchRepository.save(newBranch), HttpStatus.CREATED);
+        return branchRepository.save(newBranch);
     }
 
-    public ResponseEntity<Branch> updateBranch(Long branchId, BranchRequest branchRequest) {
-        Optional<Branch> branch = branchRepository.findById(branchId);
-
-        if (branch.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        Branch branchToUpdate = branch.get();
+    public Branch updateBranch(Long branchId, BranchRequest branchRequest) {
+        Branch branchToUpdate = branchRepository.findById(branchId)
+                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + branchId));
 
         branchToUpdate.setName(branchRequest.getName());
         branchToUpdate.setAddress(branchRequest.getAddress());
 
-        return new ResponseEntity<>(branchRepository.save(branchToUpdate), HttpStatus.OK);
+        return branchRepository.save(branchToUpdate);
     }
 
-    public ResponseEntity<Void> deleteBranch(Long branchId) {
-        Optional<Branch> branch = branchRepository.findById(branchId);
-        if (branch.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        branchRepository.delete(branch.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public void deleteBranch(Long branchId) {
+        Branch branchToDelete = branchRepository.findById(branchId)
+                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + branchId));
+        branchRepository.delete(branchToDelete);
     }
 
 }

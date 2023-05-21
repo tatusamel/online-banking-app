@@ -9,20 +9,22 @@ import com.example.onlinebankingapp.model.repositories.CustomerRepository;
 import com.example.onlinebankingapp.model.requests.CheckingAccountRequest;
 import com.example.onlinebankingapp.model.requests.CustomerRequest;
 import org.apache.coyote.Response;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class CheckingAccountService {
 
-    private CheckingAccountRepository checkingAccountRepository;
-    private BranchRepository branchRepository;
-    private CustomerRepository customerRepository;
+    private final CheckingAccountRepository checkingAccountRepository;
+    private final BranchRepository branchRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
     public CheckingAccountService( CheckingAccountRepository checkingAccountRepository,
@@ -33,67 +35,55 @@ public class CheckingAccountService {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<List<CheckingAccount>> listAllAccounts(){
-        return new ResponseEntity<>(checkingAccountRepository.findAll(), HttpStatus.OK);
+    public List<CheckingAccount> listAllAccounts(){
+        return checkingAccountRepository.findAll();
     }
 
-    public ResponseEntity<CheckingAccount> getAccountById(Long accountId) {
-        Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
-        if ( account.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(account.get(), HttpStatus.OK);
+    public CheckingAccount getAccountById(Long accountId) {
+        return checkingAccountRepository.findById(accountId)
+                .orElseThrow( () -> new NoSuchElementException("No Checking Account with id: " + accountId));
     }
 
-    public ResponseEntity<CheckingAccount> insertAccount(CheckingAccountRequest checkingAccountRequest) {
-        Long customerId = checkingAccountRequest.getCustomerId();
-        Long branchId = checkingAccountRequest.getBranchId();
+    public CheckingAccount insertAccount(CheckingAccountRequest checkingAccountRequest) {
 
-        Optional<Customer> customer = customerRepository.findById(customerId);
-        Optional<Branch> branch = branchRepository.findById(branchId);
+        Customer customer = customerRepository.findById(checkingAccountRequest.getCustomerId())
+                .orElseThrow( () -> new NoSuchElementException("No customer with id: " + checkingAccountRequest.getCustomerId()));
 
-        if ( customer.isEmpty() || branch.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        Branch branch = branchRepository.findById(checkingAccountRequest.getBranchId())
+                .orElseThrow( () -> new NoSuchElementException("No branch with id: " + checkingAccountRequest.getBranchId()));
 
         CheckingAccount newAccount = new CheckingAccount();
         newAccount.setAccountNumber(checkingAccountRequest.getAccountNumber());
-        newAccount.setBranch(branch.get());
-        newAccount.setCustomer(customer.get());
+        newAccount.setBranch(branch);
+        newAccount.setCustomer(customer);
         newAccount.setBalance(checkingAccountRequest.getBalance());
 
-        return new ResponseEntity(checkingAccountRepository.save(newAccount), HttpStatus.CREATED);
+        return checkingAccountRepository.save(newAccount);
     }
 
-    public ResponseEntity<CheckingAccount> updateAccount(Long accountId,CheckingAccountRequest checkingAccountRequest) {
-        Long customerId = checkingAccountRequest.getCustomerId();
-        Long branchId = checkingAccountRequest.getBranchId();
+    public CheckingAccount updateAccount(Long accountId,CheckingAccountRequest checkingAccountRequest) {
 
-        Optional<Customer> customer = customerRepository.findById(customerId);
-        Optional<Branch> branch = branchRepository.findById(branchId);
-        Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
 
-        if ( customer.isEmpty() || branch.isEmpty() || account.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        CheckingAccount accountToUpdate = checkingAccountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("No Checking Account with id: " + accountId));
+        Customer customer = customerRepository.findById(checkingAccountRequest.getCustomerId())
+                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + checkingAccountRequest.getCustomerId()));
+        Branch branch = branchRepository.findById(checkingAccountRequest.getBranchId())
+                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + checkingAccountRequest.getBranchId()));
 
-        CheckingAccount newAccount = new CheckingAccount();
-        newAccount.setBalance(checkingAccountRequest.getBalance());
-        newAccount.setCustomer(customer.get());
-        newAccount.setBranch(branch.get());
-        newAccount.setAccountNumber(checkingAccountRequest.getAccountNumber());
+        accountToUpdate.setBalance(checkingAccountRequest.getBalance());
+        accountToUpdate.setCustomer(customer);
+        accountToUpdate.setBranch(branch);
+        accountToUpdate.setAccountNumber(checkingAccountRequest.getAccountNumber());
 
-        return new ResponseEntity<>(checkingAccountRepository.save(newAccount), HttpStatus.CREATED);
+        return checkingAccountRepository.save(accountToUpdate);
 
     }
 
-    public ResponseEntity<Void> deleteAccount(Long accountId) {
-        Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
-        if ( account.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        checkingAccountRepository.delete(account.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public void deleteAccount(Long accountId) {
+        CheckingAccount accountToDelete = checkingAccountRepository.findById(accountId)
+                .orElseThrow( () -> new NoSuchElementException("No Checking Account with id: " + accountId));
+        checkingAccountRepository.delete(accountToDelete);
     }
 
 

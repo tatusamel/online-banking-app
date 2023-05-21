@@ -15,15 +15,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class CreditCardAccountService {
 
-    private CreditCardAccountRepository creditCardAccountRepository;
-    private BranchRepository branchRepository;
+    private final CreditCardAccountRepository creditCardAccountRepository;
+    private final BranchRepository branchRepository;
 
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
     public CreditCardAccountService(CreditCardAccountRepository creditCardAccountRepository,
@@ -34,70 +35,58 @@ public class CreditCardAccountService {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<List<CreditCardAccount>> listAllAccounts() {
-        return new ResponseEntity<>(creditCardAccountRepository.findAll(), HttpStatus.OK);
+    public List<CreditCardAccount> listAllAccounts() {
+        return creditCardAccountRepository.findAll();
     }
 
-    public ResponseEntity<CreditCardAccount> getAccountById(Long accountId) {
-        Optional<CreditCardAccount> account = creditCardAccountRepository.findById(accountId);
-        if ( account.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(account.get(), HttpStatus.OK);
+    public CreditCardAccount getAccountById(Long accountId) {
+        return creditCardAccountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("No Credit Card Account with id: " + accountId));
     }
 
-    public ResponseEntity<CreditCardAccount> insertAccount(CreditCardAccountRequest accountRequest) {
+    public CreditCardAccount insertAccount(CreditCardAccountRequest accountRequest) {
 
-        Long customerId = accountRequest.getCustomerId();
-        Long branchId = accountRequest.getBranchId();
-
-        Optional<Customer> customer = customerRepository.findById(customerId);
-        Optional<Branch> branch = branchRepository.findById(branchId);
-
-        if ( customer.isEmpty() || branch.isEmpty() ) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
+                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + accountRequest.getCustomerId()));
+        Branch branch = branchRepository.findById(accountRequest.getBranchId())
+                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + accountRequest.getBranchId()));
 
         CreditCardAccount newAccount = new CreditCardAccount();
 
         newAccount.setAccountNumber(accountRequest.getAccountNumber());
-        newAccount.setBranch(branch.get());
-        newAccount.setCustomer(customer.get());
+        newAccount.setBranch(branch);
+        newAccount.setCustomer(customer);
         newAccount.setBalance(accountRequest.getBalance());
         newAccount.setInterestRate(accountRequest.getInterestRate());
         newAccount.setCreditLimit(accountRequest.getCreditLimit());
 
-        return new ResponseEntity<>(creditCardAccountRepository.save(newAccount),HttpStatus.CREATED);
+        return creditCardAccountRepository.save(newAccount);
 
     }
 
-    public ResponseEntity<CreditCardAccount> updateAccount(Long accountId, CreditCardAccountRequest accountRequest) {
-        Optional<CreditCardAccount> account = creditCardAccountRepository.findById(accountId);
-        Optional<Customer> customer = customerRepository.findById(accountRequest.getCustomerId());
-        Optional<Branch> branch = branchRepository.findById(accountRequest.getBranchId());
-
-        if ( account.isEmpty() || customer.isEmpty() || branch.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        CreditCardAccount accountToUpdate = account.get();
+    public CreditCardAccount updateAccount(Long accountId, CreditCardAccountRequest accountRequest) {
+        CreditCardAccount accountToUpdate = creditCardAccountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("No Credit Card Account with id: " + accountId));
+        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
+                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + accountRequest.getCustomerId()));
+        Branch branch = branchRepository.findById(accountRequest.getBranchId())
+                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + accountRequest.getBranchId()));
 
         accountToUpdate.setBalance(accountRequest.getBalance());
         accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
-        accountToUpdate.setCustomer(customer.get());
-        accountToUpdate.setBranch(branch.get());
+        accountToUpdate.setCustomer(customer);
+        accountToUpdate.setBranch(branch);
         accountToUpdate.setInterestRate(accountRequest.getInterestRate());
         accountToUpdate.setCreditLimit(accountRequest.getCreditLimit());
 
-        return new ResponseEntity<>(creditCardAccountRepository.save(accountToUpdate), HttpStatus.OK);
+        return creditCardAccountRepository.save(accountToUpdate);
 
     }
 
-    public ResponseEntity<Void> deleteAccount(Long accountId) {
-        Optional<CreditCardAccount> account = creditCardAccountRepository.findById(accountId);
-        if ( account.isEmpty() ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        creditCardAccountRepository.delete(account.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+    public void deleteAccount(Long accountId) {
+        CreditCardAccount account = creditCardAccountRepository.findById(accountId)
+                        .orElseThrow(() -> new NoSuchElementException("No Credit Card Account with id: " + accountId));
+        creditCardAccountRepository.delete(account);
     }
 
 }

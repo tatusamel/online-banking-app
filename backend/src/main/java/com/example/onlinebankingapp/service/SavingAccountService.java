@@ -15,14 +15,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class SavingAccountService {
 
-    private SavingAccountRepository savingAccountRepository;
-    private BranchRepository branchRepository;
-    private CustomerRepository customerRepository;
+    private final SavingAccountRepository savingAccountRepository;
+    private final BranchRepository branchRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
     public SavingAccountService(SavingAccountRepository savingAccountRepository,
@@ -34,68 +35,61 @@ public class SavingAccountService {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<List<SavingAccount>> listAllAccounts() {
-        return new ResponseEntity<>(savingAccountRepository.findAll(), HttpStatus.OK);
+    public List<SavingAccount> listAllAccounts() {
+        return savingAccountRepository.findAll();
     }
 
-    public ResponseEntity<SavingAccount> getAccountById(Long accountId) {
-        Optional<SavingAccount> account = savingAccountRepository.findById(accountId);
-        if ( account.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(account.get(), HttpStatus.FOUND);
+    public SavingAccount getAccountById(Long accountId) {
+        return savingAccountRepository.findById(accountId)
+                .orElseThrow( () -> new NoSuchElementException("No Saving Account with id:" + accountId ) );
     }
 
-    public ResponseEntity<SavingAccount> insertAccount(SavingAccountRequest accountRequest) {
+    public SavingAccount insertAccount(SavingAccountRequest accountRequest) {
 
-        Long customerId = accountRequest.getCustomerId();
-        Long branchId = accountRequest.getBranchId();
+        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
+                .orElseThrow( () -> new NoSuchElementException("No customer with id:" + accountRequest.getCustomerId()));
 
-        Optional<Customer> customer = customerRepository.findById(customerId);
-        Optional<Branch> branch = branchRepository.findById(branchId);
-
-        if ( customer.isEmpty() || branch.isEmpty() ) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        Branch branch = branchRepository.findById(accountRequest.getBranchId())
+                .orElseThrow( () -> new NoSuchElementException("No branch with id:" + accountRequest.getBranchId()));
 
         SavingAccount newAccount = new SavingAccount();
 
         newAccount.setAccountNumber(accountRequest.getAccountNumber());
-        newAccount.setBranch(branch.get());
-        newAccount.setCustomer(customer.get());
+        newAccount.setBranch(branch);
+        newAccount.setCustomer(customer);
         newAccount.setBalance(accountRequest.getBalance());
         newAccount.setInterestRate(accountRequest.getInterestRate());
 
-        return new ResponseEntity<>(savingAccountRepository.save(newAccount),HttpStatus.CREATED);
+        return savingAccountRepository.save(newAccount);
 
     }
 
-    public ResponseEntity<SavingAccount> updateAccount(Long accountId, SavingAccountRequest accountRequest) {
-        Optional<SavingAccount> account = savingAccountRepository.findById(accountId);
-        Optional<Customer> customer = customerRepository.findById(accountRequest.getCustomerId());
-        Optional<Branch> branch = branchRepository.findById(accountRequest.getBranchId());
+    public SavingAccount updateAccount(Long accountId, SavingAccountRequest accountRequest) {
 
-        if ( account.isEmpty() || customer.isEmpty() || branch.isEmpty() ) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+        SavingAccount accountToUpdate = savingAccountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("No saving account with id: " + accountId));
 
-        SavingAccount accountToUpdate = account.get();
+        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
+                .orElseThrow(() -> new NoSuchElementException("No customer with id: " + accountRequest.getCustomerId()));
+
+        Branch branch = branchRepository.findById(accountRequest.getBranchId())
+                .orElseThrow( () -> new NoSuchElementException("No branch with id: " + accountRequest.getBranchId()));
 
         accountToUpdate.setBalance(accountRequest.getBalance());
         accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
-        accountToUpdate.setCustomer(customer.get());
-        accountToUpdate.setBranch(branch.get());
+        accountToUpdate.setCustomer(customer);
+        accountToUpdate.setBranch(branch);
         accountToUpdate.setInterestRate(accountRequest.getInterestRate());
 
-        return new ResponseEntity<>(savingAccountRepository.save(accountToUpdate), HttpStatus.OK);
+        return savingAccountRepository.save(accountToUpdate);
 
     }
 
-    public ResponseEntity<Void> deleteAccount(Long accountId) {
-        Optional<SavingAccount> account = savingAccountRepository.findById(accountId);
-        if ( account.isEmpty() ) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public void deleteAccount(Long accountId) {
 
-        savingAccountRepository.delete(account.get());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+        SavingAccount accountToDelete = savingAccountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("No Saving account with id: " + accountId ));
+        savingAccountRepository.delete(accountToDelete);
     }
 
 }
