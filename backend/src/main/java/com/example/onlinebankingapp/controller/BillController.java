@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bill")
+@RequestMapping("/bills")
 public class BillController {
 
     private final BillService billService;

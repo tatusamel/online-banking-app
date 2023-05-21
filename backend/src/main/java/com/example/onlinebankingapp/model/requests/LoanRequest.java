@@ -11,5 +11,4 @@ public class LoanRequest {
     private Date startDate;
     private Date endDate;
     private Long accountId;
-
 }

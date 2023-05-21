@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/creditcardaccount")
+@RequestMapping("/credit-card-accounts")
 public class CreditCardAccountController {
 
     private final CreditCardAccountService creditCardAccountService;

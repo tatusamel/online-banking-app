@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/branch")
+@RequestMapping("/branchs")
 public class BranchController {
 
     private final BranchService branchService;
