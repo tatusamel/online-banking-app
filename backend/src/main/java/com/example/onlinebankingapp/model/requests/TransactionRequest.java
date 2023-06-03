@@ -8,7 +8,7 @@ import java.util.Date;
 public class TransactionRequest {
     private double amount;
     private Date transactionDate;
-    private Long transactionTypeId;
+    private String transactionType;
     private Long fromAccountId;
     private Long toAccountId;
 }

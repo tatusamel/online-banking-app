@@ -15,7 +15,7 @@ public class Bill {
     private double amount;
     private Date dueDate;
 
-    @ManyToOne(targetEntity = Account.class)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 

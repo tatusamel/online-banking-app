@@ -2,10 +2,9 @@ package com.example.onlinebankingapp.service;
 
 import com.example.onlinebankingapp.model.entities.Account;
 import com.example.onlinebankingapp.model.entities.Transaction;
-import com.example.onlinebankingapp.model.entities.TransactionType;
+import com.example.onlinebankingapp.model.enums.TransactionType;
 import com.example.onlinebankingapp.model.repositories.AccountRepository;
 import com.example.onlinebankingapp.model.repositories.TransactionRepository;
-import com.example.onlinebankingapp.model.repositories.TransactionTypeRepository;
 import com.example.onlinebankingapp.model.requests.TransactionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,16 +17,12 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    private final TransactionTypeRepository transactionTypeRepository;
-
     @Autowired
     public TransactionService(TransactionRepository transactionRepository,
-                              AccountRepository accountRepository,
-                              TransactionTypeRepository transactionTypeRepository)
+                              AccountRepository accountRepository)
     {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
-        this.transactionTypeRepository = transactionTypeRepository;
     }
 
     public List<Transaction> listAllTransactions() {
@@ -44,13 +39,11 @@ public class TransactionService {
                 .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getFromAccountId()));
         Account toAccount = accountRepository.findById(request.getToAccountId())
                 .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getToAccountId()));
-        TransactionType transactionType = transactionTypeRepository.findById(request.getTransactionTypeId())
-                .orElseThrow(() -> new NoSuchElementException("No TransactionType with id: " + request.getTransactionTypeId()));
 
         Transaction transaction = new Transaction();
         transaction.setAmount(request.getAmount());
         transaction.setTransactionDate(request.getTransactionDate());
-        transaction.setTransactionType(transactionType);
+        transaction.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
         transaction.setFromAccount(fromAccount);
         transaction.setToAccount(toAccount);
 
@@ -64,12 +57,10 @@ public class TransactionService {
                 .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getFromAccountId()));
         Account toAccount = accountRepository.findById(request.getToAccountId())
                 .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getToAccountId()));
-        TransactionType transactionType = transactionTypeRepository.findById(request.getTransactionTypeId())
-                .orElseThrow(() -> new NoSuchElementException("No TransactionType with id: " + request.getTransactionTypeId()));
 
         transactionToUpdate.setAmount(request.getAmount());
         transactionToUpdate.setTransactionDate(request.getTransactionDate());
-        transactionToUpdate.setTransactionType(transactionType);
+        transactionToUpdate.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
         transactionToUpdate.setFromAccount(fromAccount);
         transactionToUpdate.setToAccount(toAccount);
 

@@ -1,5 +1,6 @@
 package com.example.onlinebankingapp.model.entities;
 
+import com.example.onlinebankingapp.model.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,16 +15,13 @@ public class Transaction {
 
     private double amount;
     private Date transactionDate;
-
-    @ManyToOne(targetEntity = TransactionType.class)
-    @JoinColumn(name = "transaction_type_id")
     private TransactionType transactionType;
 
-    @ManyToOne(targetEntity = Account.class)
+    @ManyToOne
     @JoinColumn(name = "from_account_id")
     private Account fromAccount;
 
-    @ManyToOne(targetEntity = Account.class)
+    @ManyToOne
     @JoinColumn(name = "to_account_id")
     private Account toAccount;
 

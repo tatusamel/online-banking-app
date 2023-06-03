@@ -1,10 +1,9 @@
 package com.example.onlinebankingapp.model.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.Set;
 
 @Entity
 @Data
@@ -15,4 +14,8 @@ public class Branch {
 
     private String name;
     private String address;
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    private Set<Account> accounts;
+
 }
