@@ -3,6 +3,7 @@ package com.example.onlinebankingapp.service;
 import com.example.onlinebankingapp.model.entities.*;
 import com.example.onlinebankingapp.model.repositories.CustomerRepository;
 import com.example.onlinebankingapp.model.requests.CustomerRequest;
+import com.example.onlinebankingapp.view.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

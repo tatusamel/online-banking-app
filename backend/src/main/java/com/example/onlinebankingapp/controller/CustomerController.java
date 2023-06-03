@@ -2,9 +2,11 @@ package com.example.onlinebankingapp.controller;
 
 import com.example.onlinebankingapp.model.entities.Customer;
 import com.example.onlinebankingapp.model.requests.CustomerRequest;
+import com.example.onlinebankingapp.service.AccountService;
 import com.example.onlinebankingapp.service.CheckingAccountService;
 import com.example.onlinebankingapp.service.CustomerService;
 import com.example.onlinebankingapp.view.converter.CustomerDTOConverter;
+import com.example.onlinebankingapp.view.dto.AccountDTO;
 import com.example.onlinebankingapp.view.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +22,14 @@ public class CustomerController {
 
     private final CustomerService customerService;
     private final CustomerDTOConverter customerDTOConverter;
+    private final AccountService accountService;
     @Autowired
     public CustomerController(CustomerService customerService,
-                              CustomerDTOConverter customerDTOConverter) {
+                              CustomerDTOConverter customerDTOConverter,
+                              AccountService accountService) {
         this.customerService = customerService;
         this.customerDTOConverter = customerDTOConverter;
+        this.accountService = accountService;
     }
 
     @GetMapping()
@@ -57,6 +62,11 @@ public class CustomerController {
     public  ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteCustomer(customerId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{customerId}/accounts")
+    public ResponseEntity<List<AccountDTO>> getCustomerAccounts(@PathVariable Long customerId) {
+        return new ResponseEntity<>(accountService.getAccountsByCustomerId(customerId), HttpStatus.OK);
     }
 
 }

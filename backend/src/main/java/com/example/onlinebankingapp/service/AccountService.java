@@ -4,11 +4,14 @@ import com.example.onlinebankingapp.model.entities.*;
 import com.example.onlinebankingapp.model.enums.AccountType;
 import com.example.onlinebankingapp.model.repositories.AccountRepository;
 import com.example.onlinebankingapp.model.requests.AccountRequest;
+import com.example.onlinebankingapp.view.converter.AccountDTOConverter;
+import com.example.onlinebankingapp.view.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -16,15 +19,18 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final BranchService branchService;
     private final CustomerService customerService;
+    private final AccountDTOConverter accountDTOConverter;
 
     @Autowired
     public AccountService(AccountRepository accountRepository,
                           BranchService branchService,
-                          CustomerService customerService)
+                          CustomerService customerService,
+                          AccountDTOConverter accountDTOConverter)
     {
         this.accountRepository = accountRepository;
         this.branchService = branchService;
         this.customerService = customerService;
+        this.accountDTOConverter = accountDTOConverter;
     }
 
     public List<Account> listAllAccounts() {
@@ -70,4 +76,14 @@ public class AccountService {
         accountRepository.delete(account);
     }
 
+    public List<AccountDTO> getAccountsByCustomerId(Long customerId) {
+        return accountRepository.findAccountsByCustomerId(customerId)
+                .stream().map(accountDTOConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public Account getAccountByAccountNumber(String accountNumber) {
+        return accountRepository.findAccountByAccountNumber(accountNumber)
+                .orElseThrow( () -> new NoSuchElementException("No account with account number: " + accountNumber));
+    }
 }

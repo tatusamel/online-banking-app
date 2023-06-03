@@ -5,8 +5,10 @@ import com.example.onlinebankingapp.service.AccountService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.onlinebankingapp.service.TransactionService;
 import com.example.onlinebankingapp.view.converter.AccountDTOConverter;
 import com.example.onlinebankingapp.view.dto.AccountDTO;
+import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,14 @@ public class AccountController {
 
     private final AccountService accountService;
     private final AccountDTOConverter accountDTOConverter;
+    private final TransactionService transactionService;
     @Autowired
     public AccountController(AccountService accountService,
-                             AccountDTOConverter accountDTOConverter) {
+                             AccountDTOConverter accountDTOConverter,
+                             TransactionService transactionService) {
         this.accountService = accountService;
         this.accountDTOConverter = accountDTOConverter;
+        this.transactionService = transactionService;
     }
 
     @GetMapping()
@@ -56,5 +61,11 @@ public class AccountController {
     public ResponseEntity<Void> deleteAccount(@PathVariable Long accountId) {
         accountService.deleteAccount(accountId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/{accountNumber}/transactions")
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByAccountNumber(@PathVariable String accountNumber ) {
+        List<TransactionDTO> transactionDTOS = transactionService.getAllTransactionsByAccountNumber(accountNumber);
+        return new ResponseEntity<>(transactionDTOS, HttpStatus.OK);
     }
 }
