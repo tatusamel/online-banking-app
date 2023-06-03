@@ -23,16 +23,16 @@ import java.util.Optional;
 public class CheckingAccountService {
 
     private final CheckingAccountRepository checkingAccountRepository;
-    private final BranchRepository branchRepository;
-    private final CustomerRepository customerRepository;
+    private final BranchService branchService;
+    private final CustomerService customerService;
 
     @Autowired
     public CheckingAccountService( CheckingAccountRepository checkingAccountRepository,
-                                   BranchRepository branchRepository,
-                                   CustomerRepository customerRepository) {
-        this.branchRepository = branchRepository;
+                                   BranchService branchService,
+                                   CustomerService customerService) {
+        this.branchService = branchService;
         this.checkingAccountRepository = checkingAccountRepository;
-        this.customerRepository = customerRepository;
+        this.customerService = customerService;
     }
 
     public List<CheckingAccount> listAllAccounts(){
@@ -46,44 +46,34 @@ public class CheckingAccountService {
 
     public CheckingAccount insertAccount(CheckingAccountRequest checkingAccountRequest) {
 
-        Customer customer = customerRepository.findById(checkingAccountRequest.getCustomerId())
-                .orElseThrow( () -> new NoSuchElementException("No customer with id: " + checkingAccountRequest.getCustomerId()));
-
-        Branch branch = branchRepository.findById(checkingAccountRequest.getBranchId())
-                .orElseThrow( () -> new NoSuchElementException("No branch with id: " + checkingAccountRequest.getBranchId()));
-
-        CheckingAccount newAccount = new CheckingAccount();
-        newAccount.setAccountNumber(checkingAccountRequest.getAccountNumber());
-        newAccount.setBranch(branch);
-        newAccount.setCustomer(customer);
-        newAccount.setBalance(checkingAccountRequest.getBalance());
-
-        return checkingAccountRepository.save(newAccount);
+        CheckingAccount checkingAccount = new CheckingAccount();
+        mapRequestToCheckingAccount(checkingAccountRequest, checkingAccount);
+        return checkingAccountRepository.save(checkingAccount);
     }
 
     public CheckingAccount updateAccount(Long accountId,CheckingAccountRequest checkingAccountRequest) {
 
 
-        CheckingAccount accountToUpdate = checkingAccountRepository.findById(accountId)
-                .orElseThrow(() -> new NoSuchElementException("No Checking Account with id: " + accountId));
-        Customer customer = customerRepository.findById(checkingAccountRequest.getCustomerId())
-                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + checkingAccountRequest.getCustomerId()));
-        Branch branch = branchRepository.findById(checkingAccountRequest.getBranchId())
-                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + checkingAccountRequest.getBranchId()));
-
-        accountToUpdate.setBalance(checkingAccountRequest.getBalance());
-        accountToUpdate.setCustomer(customer);
-        accountToUpdate.setBranch(branch);
-        accountToUpdate.setAccountNumber(checkingAccountRequest.getAccountNumber());
-
-        return checkingAccountRepository.save(accountToUpdate);
+        CheckingAccount checkingAccount = this.getAccountById(accountId);
+        mapRequestToCheckingAccount(checkingAccountRequest, checkingAccount);
+        return checkingAccountRepository.save(checkingAccount);
 
     }
 
     public void deleteAccount(Long accountId) {
-        CheckingAccount accountToDelete = checkingAccountRepository.findById(accountId)
-                .orElseThrow( () -> new NoSuchElementException("No Checking Account with id: " + accountId));
+        CheckingAccount accountToDelete = this.getAccountById(accountId);
         checkingAccountRepository.delete(accountToDelete);
+    }
+
+    public CheckingAccount mapRequestToCheckingAccount(CheckingAccountRequest request, CheckingAccount checkingAccount) {
+        Customer customer = customerService.getCustomerById(request.getCustomerId());
+        Branch branch = branchService.getBranchById(request.getBranchId());
+
+        checkingAccount.setAccountNumber(request.getAccountNumber());
+        checkingAccount.setBranch(branch);
+        checkingAccount.setCustomer(customer);
+        checkingAccount.setBalance(request.getBalance());
+        return checkingAccount;
     }
 
 

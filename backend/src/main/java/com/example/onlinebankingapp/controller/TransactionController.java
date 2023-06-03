@@ -3,46 +3,55 @@ package com.example.onlinebankingapp.controller;
 import com.example.onlinebankingapp.model.entities.Transaction;
 import com.example.onlinebankingapp.model.requests.TransactionRequest;
 import com.example.onlinebankingapp.service.TransactionService;
+import com.example.onlinebankingapp.view.converter.TransactionDTOConverter;
+import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final TransactionDTOConverter transactionDTOConverter;
 
     @Autowired
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService,
+                                 TransactionDTOConverter transactionDTOConverter) {
         this.transactionService = transactionService;
+        this.transactionDTOConverter = transactionDTOConverter;
     }
 
     @GetMapping
-    public ResponseEntity<List<Transaction>> listAllTransactions() {
-        List<Transaction> transactions = transactionService.listAllTransactions();
-        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    public ResponseEntity<List<TransactionDTO>> listAllTransactions() {
+        List<TransactionDTO> transactionDTOS = transactionService.listAllTransactions()
+                .stream()
+                .map(transactionDTOConverter::convertToDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(transactionDTOS, HttpStatus.OK);
     }
 
     @GetMapping("/{transactionId}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable Long transactionId) {
-        Transaction transaction = transactionService.getTransactionById(transactionId);
-        return new ResponseEntity<>(transaction, HttpStatus.OK);
+    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable Long transactionId) {
+        TransactionDTO transactionDTO = transactionDTOConverter.convertToDto(transactionService.getTransactionById(transactionId));
+        return new ResponseEntity<>(transactionDTO, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Transaction> insertTransaction(@RequestBody TransactionRequest transactionRequest) {
-        Transaction transaction = transactionService.insertTransaction(transactionRequest);
-        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+    public ResponseEntity<TransactionDTO> insertTransaction(@RequestBody TransactionRequest transactionRequest) {
+        TransactionDTO transactionDTO = transactionDTOConverter.convertToDto(transactionService.insertTransaction(transactionRequest));
+        return new ResponseEntity<>(transactionDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{transactionId}")
-    public ResponseEntity<Transaction> updateTransaction(@PathVariable Long transactionId, @RequestBody TransactionRequest transactionRequest) {
-        Transaction updatedTransaction = transactionService.updateTransaction(transactionId, transactionRequest);
-        return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
+    public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable Long transactionId, @RequestBody TransactionRequest transactionRequest) {
+        TransactionDTO transactionDTO = transactionDTOConverter.convertToDto(transactionService.updateTransaction(transactionId, transactionRequest));
+        return new ResponseEntity<>(transactionDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{transactionId}")

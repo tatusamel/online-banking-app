@@ -12,7 +12,7 @@ public class Bill {
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private double amount;
+    private Double amount;
     private Date dueDate;
 
     @ManyToOne

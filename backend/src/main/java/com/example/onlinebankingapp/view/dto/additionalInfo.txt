@@ -1,0 +1,100 @@
+Data Transfer Objects (DTOs) are typically used in the following ways:
+
+Controllers should use DTOs for receiving incoming data from a client:
+When a client sends a request to the server, the incoming JSON data should be automatically converted to
+a DTO object via the @RequestBody annotation in the method parameter.
+This allows Spring to automatically perform the conversion from JSON to a Java object.
+
+Controllers should use DTOs for returning data to a client: When returning data to the client,
+the controller should convert the entities to DTOs and return the DTOs to the client. This allows the server to
+control exactly which data is returned to the client and prevents any sensitive data in the entities from being
+inadvertently exposed to the client.
+
+Services should communicate with controllers using DTOs: If a controller calls a service method that needs to
+return data to the controller, the service should convert the entity to a DTO and return the DTO to the controller.
+Similarly, if a controller calls a service method that needs to update an entity based on data received from a client
+, the controller should pass a DTO to the service method, and the service should convert the DTO to an entity
+before saving it to the database.
+
+Services should communicate with repositories using entities: When a service calls a repository method that needs
+ to return data to the service, the repository should return the entity to the service. Similarly, if a service calls
+  a repository method that needs to save data to the database, the service should convert the DTO to an entity before
+   passing it to the repository method.
+
+Here is an example of how you can apply these principles to your UserController:
+
+java
+Copy code
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private final UserService userService;
+    private final UserDTOConverter userDTOConverter;
+
+    @Autowired
+    public UserController(UserService userService, UserDTOConverter userDTOConverter) {
+        this.userService = userService;
+        this.userDTOConverter = userDTOConverter;
+    }
+
+    @GetMapping
+    public List<UserDTO> getAllUsers() {
+        return userService.findAll().stream()
+            .map(userDTOConverter::convertToDto)
+            .collect(Collectors.toList());
+    }
+
+    // similar changes for other methods...
+}
+And here is an example for UserService:
+
+java
+Copy code
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final UserDTOConverter userDTOConverter;
+
+    @Autowired
+    public UserService(UserRepository userRepository, UserDTOConverter userDTOConverter) {
+        this.userRepository = userRepository;
+        this.userDTOConverter = userDTOConverter;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll().stream()
+            .map(userDTOConverter::convertToEntity)
+            .collect(Collectors.toList());
+    }
+
+    // similar changes for other methods...
+}
+In the UserService example above, the UserService is returning entities, not DTOs. This is because the UserService is also used by other services in your application, not just controllers. These other services need to work with entities, not DTOs.
+
+But if your UserService is only used by controllers, then you can make your UserService return DTOs:
+
+java
+Copy code
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final UserDTOConverter userDTOConverter;
+
+    @Autowired
+    public UserService(UserRepository userRepository, UserDTOConverter userDTOConverter) {
+        this.userRepository = userRepository;
+        this.userDTOConverter = userDTOConverter;
+    }
+
+    public List<UserDTO> findAll() {
+        return userRepository.findAll().stream()
+            .map(userDTOConverter::convertToDto)
+            .collect(Collectors.toList());
+    }
+
+    // similar changes for other methods...
+}
+In this case, the UserRepository should return entities, and the UserService should convert the entities to DTOs before returning them to

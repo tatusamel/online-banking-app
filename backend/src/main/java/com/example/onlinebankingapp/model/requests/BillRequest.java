@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 public class BillRequest {
     private String name;
-    private double amount;
+    private Double amount;
     private Date dueDate;
     private Long accountId;
 }

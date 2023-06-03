@@ -1,11 +1,9 @@
-package com.example.onlinebankingapp.model.requests;
-
-import lombok.Data;
+package com.example.onlinebankingapp.view.dto;
 
 import java.util.Date;
 
-@Data
-public class LoanRequest {
+public class LoanDTO {
+
     private Double amount;
     private Double interestRate;
     private Date startDate;

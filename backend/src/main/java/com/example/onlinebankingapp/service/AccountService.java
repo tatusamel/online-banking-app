@@ -1,9 +1,8 @@
 package com.example.onlinebankingapp.service;
 
 import com.example.onlinebankingapp.model.entities.*;
+import com.example.onlinebankingapp.model.enums.AccountType;
 import com.example.onlinebankingapp.model.repositories.AccountRepository;
-import com.example.onlinebankingapp.model.repositories.BranchRepository;
-import com.example.onlinebankingapp.model.repositories.CustomerRepository;
 import com.example.onlinebankingapp.model.requests.AccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,17 +14,17 @@ import java.util.NoSuchElementException;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final BranchRepository branchRepository;
-    private final CustomerRepository customerRepository;
+    private final BranchService branchService;
+    private final CustomerService customerService;
 
     @Autowired
     public AccountService(AccountRepository accountRepository,
-                          BranchRepository branchRepository,
-                          CustomerRepository customerRepository)
+                          BranchService branchService,
+                          CustomerService customerService)
     {
         this.accountRepository = accountRepository;
-        this.branchRepository = branchRepository;
-        this.customerRepository = customerRepository;
+        this.branchService = branchService;
+        this.customerService = customerService;
     }
 
     public List<Account> listAllAccounts() {
@@ -37,40 +36,37 @@ public class AccountService {
     }
 
     public Account insertAccount(AccountRequest accountRequest) {
-        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
-                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + accountRequest.getCustomerId()));
-        Branch branch = branchRepository.findById(accountRequest.getBranchId())
-                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + accountRequest.getBranchId()));
+        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
+        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
 
         Account newAccount = new Account();
         newAccount.setAccountNumber(accountRequest.getAccountNumber());
         newAccount.setBranch(branch);
         newAccount.setCustomer(customer);
         newAccount.setBalance(accountRequest.getBalance());
+        newAccount.setAccountType(AccountType.valueOf(accountRequest.getAccountType()));
 
         return accountRepository.save(newAccount);
 
     }
 
     public Account updateAccount(Long accountId, AccountRequest accountRequest) {
-        Account accountToUpdate = accountRepository.findById(accountId)
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + accountId));
-        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
-                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + accountRequest.getCustomerId()));
-        Branch branch = branchRepository.findById(accountRequest.getBranchId())
-                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + accountRequest.getBranchId()));
+        Account accountToUpdate = this.getAccountById(accountId);
+        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
+        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
 
         accountToUpdate.setBalance(accountRequest.getBalance());
         accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
         accountToUpdate.setCustomer(customer);
         accountToUpdate.setBranch(branch);
+        accountToUpdate.setAccountType(AccountType.valueOf(accountRequest.getAccountType()));
 
         return accountRepository.save(accountToUpdate);
 
     }
 
     public void deleteAccount(Long accountId) {
-        Account account = accountRepository.findById(accountId).orElseThrow(() -> new NoSuchElementException("No Account with id: "+ accountId));
+        Account account = this.getAccountById(accountId);
         accountRepository.delete(account);
     }
 

@@ -34,34 +34,31 @@ public class CustomerService {
 
     public Customer insertCustomer(CustomerRequest customerRequest) {
         Customer newCustomer = new Customer();
-
-        newCustomer.setFirstName(customerRequest.getFirstName());
-        newCustomer.setLastName(customerRequest.getLastName());
-        newCustomer.setEmail(customerRequest.getEmail());
-        newCustomer.setPhone(customerRequest.getPhone());
-        newCustomer.setAddress(customerRequest.getAddress());
-
+        mapRequestToCustomer(customerRequest, newCustomer);
         return customerRepository.save(newCustomer);
     }
 
     public Customer updateCustomer(Long customerId, CustomerRequest customerRequest) {
-
-        Customer customerToUpdate = customerRepository.findById(customerId)
-                        .orElseThrow( () -> new NoSuchElementException("No Customer with id: "+ customerId));
-
-        customerToUpdate.setFirstName(customerRequest.getFirstName());
-        customerToUpdate.setLastName(customerRequest.getLastName());
-        customerToUpdate.setEmail(customerRequest.getEmail());
-        customerToUpdate.setPhone(customerRequest.getPhone());
-        customerToUpdate.setAddress(customerRequest.getAddress());
-
+        Customer customerToUpdate = this.getCustomerById(customerId);
+        mapRequestToCustomer(customerRequest, customerToUpdate);
         return customerRepository.save(customerToUpdate);
     }
 
     public void deleteCustomer(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                        .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + customerId ));
+        Customer customer = this.getCustomerById(customerId);
         customerRepository.delete(customer);
+    }
+
+    private Customer mapRequestToCustomer(CustomerRequest customerRequest, Customer customer) {
+        customer.setFirstName(customerRequest.getFirstName());
+        customer.setLastName(customerRequest.getLastName());
+        customer.setEmail(customerRequest.getEmail());
+        customer.setPhone(customerRequest.getPhone());
+        customer.setAddress(customerRequest.getAddress());
+        // TODO:encrypt password
+        customer.setPassword(customerRequest.getPassword());
+
+        return customer;
     }
 
 }

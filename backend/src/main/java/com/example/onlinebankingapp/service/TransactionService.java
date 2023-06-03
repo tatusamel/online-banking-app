@@ -16,13 +16,14 @@ import java.util.NoSuchElementException;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
     @Autowired
     public TransactionService(TransactionRepository transactionRepository,
-                              AccountRepository accountRepository)
+                              AccountService accountService)
     {
         this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
+
     }
 
     public List<Transaction> listAllTransactions() {
@@ -35,42 +36,34 @@ public class TransactionService {
     }
 
     public Transaction insertTransaction(TransactionRequest request) {
-        Account fromAccount = accountRepository.findById(request.getFromAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getFromAccountId()));
-        Account toAccount = accountRepository.findById(request.getToAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getToAccountId()));
-
         Transaction transaction = new Transaction();
-        transaction.setAmount(request.getAmount());
-        transaction.setTransactionDate(request.getTransactionDate());
-        transaction.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
-        transaction.setFromAccount(fromAccount);
-        transaction.setToAccount(toAccount);
-
+        mapRequestToTransaction(request, transaction);
         return transactionRepository.save(transaction);
     }
 
     public Transaction updateTransaction(Long transactionId, TransactionRequest request) {
-        Transaction transactionToUpdate = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new NoSuchElementException("No Transaction with id: " + transactionId));
-        Account fromAccount = accountRepository.findById(request.getFromAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getFromAccountId()));
-        Account toAccount = accountRepository.findById(request.getToAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + request.getToAccountId()));
-
-        transactionToUpdate.setAmount(request.getAmount());
-        transactionToUpdate.setTransactionDate(request.getTransactionDate());
-        transactionToUpdate.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
-        transactionToUpdate.setFromAccount(fromAccount);
-        transactionToUpdate.setToAccount(toAccount);
-
-        return transactionRepository.save(transactionToUpdate);
+        Transaction transaction = this.getTransactionById(transactionId);
+        mapRequestToTransaction(request, transaction);
+        return transactionRepository.save(transaction);
     }
 
     public void deleteTransaction(Long transactionId) {
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new NoSuchElementException("No Transaction with id: " + transactionId));
         transactionRepository.delete(transaction);
+    }
+
+    public Transaction mapRequestToTransaction(TransactionRequest request, Transaction transaction) {
+        Account fromAccount = accountService.getAccountById(request.getFromAccountId());
+        Account toAccount = accountService.getAccountById(request.getToAccountId());
+
+        transaction.setAmount(request.getAmount());
+        transaction.setTransactionDate(request.getTransactionDate());
+        transaction.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
+        transaction.setFromAccount(fromAccount);
+        transaction.setToAccount(toAccount);
+
+        return transaction;
     }
 
 

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreditCardAccountRequest extends AccountRequest{
-    private double interestRate;
+    private Double interestRate;
     private int creditLimit;
 }

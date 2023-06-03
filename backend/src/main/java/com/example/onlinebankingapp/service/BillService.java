@@ -18,12 +18,12 @@ import java.util.NoSuchElementException;
 public class BillService {
 
     private final BillRepository billRepository;
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
     @Autowired
-    public BillService(BillRepository billRepository, AccountRepository accountRepository) {
+    public BillService(BillRepository billRepository, AccountService accountService) {
         this.billRepository = billRepository;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
     public List<Bill> listAllBills() {
@@ -36,8 +36,7 @@ public class BillService {
     }
 
     public Bill insertBill(BillRequest billRequest) {
-        Account account = accountRepository.findById(billRequest.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + billRequest.getAccountId()));
+        Account account = accountService.getAccountById(billRequest.getAccountId());
 
         Bill bill = new Bill();
         bill.setName(billRequest.getName());
@@ -49,10 +48,8 @@ public class BillService {
     }
 
     public Bill updateBill(Long billId, BillRequest billRequest) {
-        Bill billToUpdate = billRepository.findById(billId)
-                .orElseThrow(() -> new NoSuchElementException("No Bill with id: " + billId));
-        Account account = accountRepository.findById(billRequest.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + billRequest.getAccountId()));
+        Bill billToUpdate = this.getBillById(billId);
+        Account account = accountService.getAccountById(billRequest.getAccountId());
 
         billToUpdate.setName(billRequest.getName());
         billToUpdate.setAmount(billRequest.getAmount());
@@ -63,8 +60,7 @@ public class BillService {
     }
 
     public void deleteBill(Long billId) {
-        Bill billToDelete = billRepository.findById(billId)
-                .orElseThrow(() -> new NoSuchElementException("No Bill with id: " + billId));
+        Bill billToDelete = this.getBillById(billId);
         billRepository.delete(billToDelete);
     }
 

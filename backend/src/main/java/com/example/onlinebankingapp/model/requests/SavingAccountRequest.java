@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class SavingAccountRequest extends AccountRequest {
-    private double interestRate;
+    private Double interestRate;
 }

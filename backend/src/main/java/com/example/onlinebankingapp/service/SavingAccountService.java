@@ -22,17 +22,17 @@ import java.util.Optional;
 public class SavingAccountService {
 
     private final SavingAccountRepository savingAccountRepository;
-    private final BranchRepository branchRepository;
-    private final CustomerRepository customerRepository;
+    private final BranchService branchService;
+    private final CustomerService customerService;
 
     @Autowired
     public SavingAccountService(SavingAccountRepository savingAccountRepository,
-                                BranchRepository branchRepository,
-                                CustomerRepository customerRepository)
+                                BranchService branchService,
+                                CustomerService customerService)
     {
         this.savingAccountRepository = savingAccountRepository;
-        this.branchRepository = branchRepository;
-        this.customerRepository = customerRepository;
+        this.branchService = branchService;
+        this.customerService = customerService;
     }
 
     public List<SavingAccount> listAllAccounts() {
@@ -46,41 +46,16 @@ public class SavingAccountService {
 
     public SavingAccount insertAccount(SavingAccountRequest accountRequest) {
 
-        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
-                .orElseThrow( () -> new NoSuchElementException("No customer with id:" + accountRequest.getCustomerId()));
-
-        Branch branch = branchRepository.findById(accountRequest.getBranchId())
-                .orElseThrow( () -> new NoSuchElementException("No branch with id:" + accountRequest.getBranchId()));
-
         SavingAccount newAccount = new SavingAccount();
-
-        newAccount.setAccountNumber(accountRequest.getAccountNumber());
-        newAccount.setBranch(branch);
-        newAccount.setCustomer(customer);
-        newAccount.setBalance(accountRequest.getBalance());
-        newAccount.setInterestRate(accountRequest.getInterestRate());
-
+        mapRequestToSavingAccount(newAccount, accountRequest);
         return savingAccountRepository.save(newAccount);
 
     }
 
     public SavingAccount updateAccount(Long accountId, SavingAccountRequest accountRequest) {
 
-        SavingAccount accountToUpdate = savingAccountRepository.findById(accountId)
-                .orElseThrow(() -> new NoSuchElementException("No saving account with id: " + accountId));
-
-        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
-                .orElseThrow(() -> new NoSuchElementException("No customer with id: " + accountRequest.getCustomerId()));
-
-        Branch branch = branchRepository.findById(accountRequest.getBranchId())
-                .orElseThrow( () -> new NoSuchElementException("No branch with id: " + accountRequest.getBranchId()));
-
-        accountToUpdate.setBalance(accountRequest.getBalance());
-        accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
-        accountToUpdate.setCustomer(customer);
-        accountToUpdate.setBranch(branch);
-        accountToUpdate.setInterestRate(accountRequest.getInterestRate());
-
+        SavingAccount accountToUpdate = this.getAccountById(accountId);
+        mapRequestToSavingAccount(accountToUpdate, accountRequest);
         return savingAccountRepository.save(accountToUpdate);
 
     }
@@ -92,4 +67,15 @@ public class SavingAccountService {
         savingAccountRepository.delete(accountToDelete);
     }
 
+    public SavingAccount mapRequestToSavingAccount(SavingAccount savingAccount, SavingAccountRequest accountRequest) {
+
+        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
+        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
+        savingAccount.setBalance(accountRequest.getBalance());
+        savingAccount.setAccountNumber(accountRequest.getAccountNumber());
+        savingAccount.setCustomer(customer);
+        savingAccount.setBranch(branch);
+        savingAccount.setInterestRate(accountRequest.getInterestRate());
+        return savingAccount;
+    }
 }

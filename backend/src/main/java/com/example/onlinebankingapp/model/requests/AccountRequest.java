@@ -11,8 +11,6 @@ public class AccountRequest {
     private double balance;
     private Long customerId;
     private Long branchId;
-
-    //@Enumerated(EnumType.STRING)
-    //private AccountType accountType;
-
+    @Enumerated(EnumType.STRING)
+    private String accountType;
 }

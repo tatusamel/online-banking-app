@@ -1,5 +1,6 @@
 package com.example.onlinebankingapp.model.entities;
 
+import com.example.onlinebankingapp.model.enums.AccountType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,7 +15,8 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accountNumber;
-    private double balance;
+    private Double balance;
+    private AccountType accountType;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -35,6 +37,5 @@ public class Account {
 
     @OneToMany(mappedBy = "toAccount", cascade = CascadeType.ALL)
     private Set<Transaction> incomingTransactions;
-
 
 }

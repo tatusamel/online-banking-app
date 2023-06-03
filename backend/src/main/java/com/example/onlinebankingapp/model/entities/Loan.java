@@ -13,8 +13,8 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double amount;
-    private double interestRate;
+    private Double amount;
+    private Double interestRate;
     private Date startDate;
     private Date endDate;
 

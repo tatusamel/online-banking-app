@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Data
 public class TransactionRequest {
-    private double amount;
+    private Double amount;
     private Date transactionDate;
     private String transactionType;
     private Long fromAccountId;

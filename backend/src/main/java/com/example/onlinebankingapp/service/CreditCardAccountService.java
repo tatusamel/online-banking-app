@@ -22,17 +22,17 @@ import java.util.Optional;
 public class CreditCardAccountService {
 
     private final CreditCardAccountRepository creditCardAccountRepository;
-    private final BranchRepository branchRepository;
+    private final BranchService branchService;
 
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
     @Autowired
     public CreditCardAccountService(CreditCardAccountRepository creditCardAccountRepository,
-                                    BranchRepository branchRepository,
-                                    CustomerRepository customerRepository) {
+                                    BranchService branchService,
+                                    CustomerService customerService) {
         this.creditCardAccountRepository = creditCardAccountRepository;
-        this.branchRepository = branchRepository;
-        this.customerRepository = customerRepository;
+        this.branchService = branchService;
+        this.customerService = customerService;
     }
 
     public List<CreditCardAccount> listAllAccounts() {
@@ -46,10 +46,8 @@ public class CreditCardAccountService {
 
     public CreditCardAccount insertAccount(CreditCardAccountRequest accountRequest) {
 
-        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
-                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + accountRequest.getCustomerId()));
-        Branch branch = branchRepository.findById(accountRequest.getBranchId())
-                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + accountRequest.getBranchId()));
+        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
+        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
 
         CreditCardAccount newAccount = new CreditCardAccount();
 
@@ -65,12 +63,9 @@ public class CreditCardAccountService {
     }
 
     public CreditCardAccount updateAccount(Long accountId, CreditCardAccountRequest accountRequest) {
-        CreditCardAccount accountToUpdate = creditCardAccountRepository.findById(accountId)
-                .orElseThrow(() -> new NoSuchElementException("No Credit Card Account with id: " + accountId));
-        Customer customer = customerRepository.findById(accountRequest.getCustomerId())
-                .orElseThrow(() -> new NoSuchElementException("No Customer with id: " + accountRequest.getCustomerId()));
-        Branch branch = branchRepository.findById(accountRequest.getBranchId())
-                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + accountRequest.getBranchId()));
+        CreditCardAccount accountToUpdate = this.getAccountById(accountId);
+        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
+        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
 
         accountToUpdate.setBalance(accountRequest.getBalance());
         accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
@@ -84,8 +79,7 @@ public class CreditCardAccountService {
     }
 
     public void deleteAccount(Long accountId) {
-        CreditCardAccount account = creditCardAccountRepository.findById(accountId)
-                        .orElseThrow(() -> new NoSuchElementException("No Credit Card Account with id: " + accountId));
+        CreditCardAccount account = this.getAccountById(accountId);
         creditCardAccountRepository.delete(account);
     }
 

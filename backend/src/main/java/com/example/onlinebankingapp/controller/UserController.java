@@ -1,6 +1,9 @@
 package com.example.onlinebankingapp.controller;
 
 import com.example.onlinebankingapp.model.entities.User;
+import com.example.onlinebankingapp.model.requests.UserRequest;
+import com.example.onlinebankingapp.view.converter.UserDTOConverter;
+import com.example.onlinebankingapp.view.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,58 +12,50 @@ import com.example.onlinebankingapp.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
+    private final UserDTOConverter userDTOConverter;
 
     @Autowired
-    public UserController(UserService userService) {this.userService = userService;}
+    public UserController(UserService userService,
+                          UserDTOConverter userDTOConverter ) {
+        this.userService = userService;
+        this.userDTOConverter = userDTOConverter;
+    }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.findAll();
+    public List<UserDTO> getAllUsers() {
+        return userService.findAll().stream()
+                .map(userDTOConverter::convertToDto).
+                collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        Optional<User> user = userService.findById(id);
-        return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+        UserDTO userDTO = userDTOConverter.convertToDto(userService.getUserById(id));
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.save(user);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserRequest request) {
+        UserDTO userDTO = userDTOConverter.convertToDto(userService.createUser(request));
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @RequestBody User user) {
-        Optional<User> existingUser = userService.findById(id);
-        if (existingUser.isPresent()) {
-            User updatedUser = existingUser.get();
-            updatedUser.setPassword(user.getPassword());
-            updatedUser.setFirstName(user.getFirstName());
-            updatedUser.setLastName(user.getLastName());
-            updatedUser.setEmail(user.getEmail());
-            userService.save(updatedUser);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long id, @RequestBody UserRequest request) {
+        UserDTO userDTO = userDTOConverter.convertToDto(userService.updateUser(id, request));
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
-        Optional<User> user = userService.findById(id);
-        if (user.isPresent()) {
-            userService.delete(user.get());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

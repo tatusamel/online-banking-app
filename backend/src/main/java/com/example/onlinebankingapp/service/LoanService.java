@@ -18,12 +18,13 @@ import java.util.NoSuchElementException;
 public class LoanService {
 
     private final LoanRepository loanRepository;
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
     @Autowired
-    public LoanService(LoanRepository loanRepository, AccountRepository accountRepository) {
+    public LoanService(LoanRepository loanRepository,
+                       AccountService accountService) {
         this.loanRepository = loanRepository;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
     public List<Loan> listAllLoans() {
@@ -36,38 +37,32 @@ public class LoanService {
     }
 
     public Loan insertLoan(LoanRequest loanRequest) {
-        Account account = accountRepository.findById(loanRequest.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + loanRequest.getAccountId()));
-
         Loan loan = new Loan();
+        mapRequestToLoan(loanRequest, loan);
+        return loanRepository.save(loan);
+    }
+
+    public Loan updateLoan(Long loanId, LoanRequest loanRequest) {
+        Loan loanToUpdate = this.getLoanById(loanId);
+        mapRequestToLoan(loanRequest, loanToUpdate);
+        return loanRepository.save(loanToUpdate);
+    }
+
+    public void deleteLoan(Long loanId) {
+        Loan loanToDelete = getLoanById(loanId);
+        loanRepository.delete(loanToDelete);
+    }
+
+    public Loan mapRequestToLoan(LoanRequest loanRequest, Loan loan) {
+        Account account = accountService.getAccountById(loanRequest.getAccountId());
+
         loan.setAccount(account);
         loan.setAmount(loanRequest.getAmount());
         loan.setInterestRate(loanRequest.getInterestRate());
         loan.setStartDate(loanRequest.getStartDate());
         loan.setEndDate(loanRequest.getEndDate());
 
-        return loanRepository.save(loan);
-    }
-
-    public Loan updateLoan(Long loanId, LoanRequest loanRequest) {
-        Account account = accountRepository.findById(loanRequest.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("No Account with id: " + loanRequest.getAccountId()));
-        Loan loanToUpdate = loanRepository.findById(loanId)
-                .orElseThrow(() -> new NoSuchElementException("No Loan with id: " + loanId));
-
-        loanToUpdate.setAccount(account);
-        loanToUpdate.setAmount(loanRequest.getAmount());
-        loanToUpdate.setInterestRate(loanRequest.getInterestRate());
-        loanToUpdate.setStartDate(loanRequest.getStartDate());
-        loanToUpdate.setEndDate(loanRequest.getEndDate());
-
-        return loanRepository.save(loanToUpdate);
-    }
-
-    public void deleteLoan(Long loanId) {
-        Loan loanToDelete = loanRepository.findById(loanId)
-                .orElseThrow(() -> new NoSuchElementException("No Loan with id: " + loanId));
-        loanRepository.delete(loanToDelete);
+        return loan;
     }
 
 }

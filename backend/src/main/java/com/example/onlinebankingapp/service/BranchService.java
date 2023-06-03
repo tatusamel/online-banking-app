@@ -41,8 +41,7 @@ public class BranchService {
     }
 
     public Branch updateBranch(Long branchId, BranchRequest branchRequest) {
-        Branch branchToUpdate = branchRepository.findById(branchId)
-                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + branchId));
+        Branch branchToUpdate = this.getBranchById(branchId);
 
         branchToUpdate.setName(branchRequest.getName());
         branchToUpdate.setAddress(branchRequest.getAddress());
@@ -51,9 +50,8 @@ public class BranchService {
     }
 
     public void deleteBranch(Long branchId) {
-        Branch branchToDelete = branchRepository.findById(branchId)
-                .orElseThrow(() -> new NoSuchElementException("No Branch with id: " + branchId));
-        branchRepository.delete(branchToDelete);
+        Branch branchToUpdate = this.getBranchById(branchId);
+        branchRepository.delete(branchToUpdate);
     }
 
 }
