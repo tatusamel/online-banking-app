@@ -14,11 +14,11 @@ public class Account {
     private String accountNumber;
     private double balance;
 
-    @ManyToOne(targetEntity = Customer.class)
+    @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne(targetEntity = Branch.class)
+    @ManyToOne
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
