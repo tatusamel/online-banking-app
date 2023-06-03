@@ -8,6 +8,8 @@ services:
           "spring.datasource.url"  : "jdbc:mysql://db:3306/$DB_NAME",
           "spring.datasource.password" : "$DB_PASSWORD"
         }'
+    ports:
+      - 8080:8080
     depends_on:
       db:
         condition: service_healthy

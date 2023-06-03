@@ -4,16 +4,38 @@ import * as ReactDOM from "react-dom/client"
 import { App } from "./App"
 import reportWebVitals from "./reportWebVitals"
 import * as serviceWorker from "./serviceWorker"
+import { ChakraProvider } from "@chakra-ui/react";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import { RegisterPage } from "./pages/RegisterPage";
+import { LoginPage } from "./pages/LoginPage"
+
+const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <LoginPage/>
+  },
+  {
+    path: "/register",
+    element: <RegisterPage/>
+  },
+]);
+
 
 
 const container = document.getElementById("root")
 if (!container) throw new Error('Failed to find the root element');
 const root = ReactDOM.createRoot(container)
 
+
 root.render(
   <React.StrictMode>
     <ColorModeScript />
-    <App />
+    <ChakraProvider>
+    <RouterProvider router={router} />
+    </ChakraProvider>
   </React.StrictMode>,
 )
 
