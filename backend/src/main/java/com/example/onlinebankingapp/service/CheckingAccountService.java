@@ -3,6 +3,7 @@ package com.example.onlinebankingapp.service;
 import com.example.onlinebankingapp.model.entities.Branch;
 import com.example.onlinebankingapp.model.entities.CheckingAccount;
 import com.example.onlinebankingapp.model.entities.Customer;
+import com.example.onlinebankingapp.model.enums.AccountType;
 import com.example.onlinebankingapp.model.repositories.BranchRepository;
 import com.example.onlinebankingapp.model.repositories.CheckingAccountRepository;
 import com.example.onlinebankingapp.model.repositories.CustomerRepository;
@@ -73,6 +74,10 @@ public class CheckingAccountService {
         checkingAccount.setBranch(branch);
         checkingAccount.setCustomer(customer);
         checkingAccount.setBalance(request.getBalance());
+        if ( !request.getAccountType().equals(AccountType.CHECKING_ACCOUNT.toString())) {
+            throw new IllegalArgumentException("Account type must be CHECKING_ACCOUNT");
+        }
+        checkingAccount.setAccountType(AccountType.CHECKING_ACCOUNT);
         return checkingAccount;
     }
 

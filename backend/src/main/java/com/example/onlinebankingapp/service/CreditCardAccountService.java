@@ -4,6 +4,7 @@ package com.example.onlinebankingapp.service;
 import com.example.onlinebankingapp.model.entities.Branch;
 import com.example.onlinebankingapp.model.entities.CreditCardAccount;
 import com.example.onlinebankingapp.model.entities.Customer;
+import com.example.onlinebankingapp.model.enums.AccountType;
 import com.example.onlinebankingapp.model.repositories.BranchRepository;
 import com.example.onlinebankingapp.model.repositories.CreditCardAccountRepository;
 import com.example.onlinebankingapp.model.repositories.CustomerRepository;
@@ -46,34 +47,15 @@ public class CreditCardAccountService {
 
     public CreditCardAccount insertAccount(CreditCardAccountRequest accountRequest) {
 
-        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
-        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
-
         CreditCardAccount newAccount = new CreditCardAccount();
-
-        newAccount.setAccountNumber(accountRequest.getAccountNumber());
-        newAccount.setBranch(branch);
-        newAccount.setCustomer(customer);
-        newAccount.setBalance(accountRequest.getBalance());
-        newAccount.setInterestRate(accountRequest.getInterestRate());
-        newAccount.setCreditLimit(accountRequest.getCreditLimit());
-
+        mapRequestToCreditCardAccount(accountRequest, newAccount);
         return creditCardAccountRepository.save(newAccount);
 
     }
 
     public CreditCardAccount updateAccount(Long accountId, CreditCardAccountRequest accountRequest) {
         CreditCardAccount accountToUpdate = this.getAccountById(accountId);
-        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
-        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
-
-        accountToUpdate.setBalance(accountRequest.getBalance());
-        accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
-        accountToUpdate.setCustomer(customer);
-        accountToUpdate.setBranch(branch);
-        accountToUpdate.setInterestRate(accountRequest.getInterestRate());
-        accountToUpdate.setCreditLimit(accountRequest.getCreditLimit());
-
+        mapRequestToCreditCardAccount(accountRequest, accountToUpdate);
         return creditCardAccountRepository.save(accountToUpdate);
 
     }
@@ -81,6 +63,24 @@ public class CreditCardAccountService {
     public void deleteAccount(Long accountId) {
         CreditCardAccount account = this.getAccountById(accountId);
         creditCardAccountRepository.delete(account);
+    }
+
+    public CreditCardAccount mapRequestToCreditCardAccount(CreditCardAccountRequest request, CreditCardAccount creditCardAccount) {
+
+        Customer customer = customerService.getCustomerById(request.getCustomerId());
+        Branch branch = branchService.getBranchById(request.getBranchId());
+
+        creditCardAccount.setBalance(request.getBalance());
+        creditCardAccount.setAccountNumber(request.getAccountNumber());
+        creditCardAccount.setCustomer(customer);
+        creditCardAccount.setBranch(branch);
+        creditCardAccount.setInterestRate(request.getInterestRate());
+        creditCardAccount.setCreditLimit(request.getCreditLimit());
+        if ( !request.getAccountType().equals(AccountType.CREDIT_CARD_ACCOUNT.toString())) {
+            throw new IllegalArgumentException("Account type must be CREDIT_CARD_ACCOUNT");
+        }
+        creditCardAccount.setAccountType(AccountType.CREDIT_CARD_ACCOUNT);
+        return creditCardAccount;
     }
 
 }

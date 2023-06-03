@@ -62,8 +62,7 @@ public class SavingAccountService {
 
     public void deleteAccount(Long accountId) {
 
-        SavingAccount accountToDelete = savingAccountRepository.findById(accountId)
-                .orElseThrow(() -> new NoSuchElementException("No Saving account with id: " + accountId ));
+        SavingAccount accountToDelete = this.getAccountById(accountId);
         savingAccountRepository.delete(accountToDelete);
     }
 
@@ -76,6 +75,10 @@ public class SavingAccountService {
         savingAccount.setCustomer(customer);
         savingAccount.setBranch(branch);
         savingAccount.setInterestRate(accountRequest.getInterestRate());
+        if ( !accountRequest.getAccountType().equals(AccountType.SAVING_ACCOUNT.toString())) {
+            throw new IllegalArgumentException("Account type must be SAVING_ACCOUNT");
+        }
+        savingAccount.setAccountType(AccountType.SAVING_ACCOUNT);
         return savingAccount;
     }
 }
