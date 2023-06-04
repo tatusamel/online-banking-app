@@ -86,8 +86,8 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             // Check if the password matches
-            String passwordEntered = passwordEncoder.encode(loginRequest.getPassword());
-            if (user.getPassword().equals(passwordEntered)) {
+
+            if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 // Password is correct, return the user object
                 userActionService.userLoginSuccessfulAction(user.getId());
                 return user;

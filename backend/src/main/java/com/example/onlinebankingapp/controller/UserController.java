@@ -41,7 +41,7 @@ public class UserController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/insert")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserRequest request) {
         UserDTO userDTO = userDTOConverter.convertToDto(userService.createUser(request));
         return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
