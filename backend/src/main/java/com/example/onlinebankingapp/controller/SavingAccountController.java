@@ -61,4 +61,9 @@ public class SavingAccountController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/min-balance")
+    public ResponseEntity<Double> getMinBalance() {
+        return new ResponseEntity<>(accountService.getMinBalance(), HttpStatus.OK);
+    }
+
 }

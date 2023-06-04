@@ -9,6 +9,7 @@ import com.example.onlinebankingapp.view.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -98,5 +99,35 @@ public class AccountService {
 
     public Account saveAccount(Account account) {
         return accountRepository.save(account);
+    }
+
+    public Double getTotalBalance() {
+        return accountRepository.findTotalBalance();
+    }
+
+    public Double getTotalBalanceByCustomerId(Long customerId) {
+        return accountRepository.findTotalBalanceByAccountNumber(customerId);
+    }
+
+    public Double getTotalMoneyByBranchId(Long branchId) {
+        return accountRepository.findTotalMoneyByBranchId(branchId);
+    }
+
+    public Double getAvgBalanceByAccountType(String accountType) {
+        return accountRepository.findAvgBalanceByAccountType(accountType);
+    }
+
+    public List<AccountDTO> getLast10CreatedAccounts() {
+        return accountRepository.findLast10CreatedAccounts()
+                .stream().map(accountDTOConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public Integer getNumberOfAccountsByAccountType(String accountType) {
+        return accountRepository.findNumberOfAccountsByAccountType(accountType);
+    }
+
+    public Integer getMaxBalance() {
+        return accountRepository.findMaxBalance();
     }
 }

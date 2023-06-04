@@ -88,4 +88,8 @@ public class SavingAccountService {
         savingAccount.setAccountType(AccountType.SAVING_ACCOUNT);
         return savingAccount;
     }
+
+    public Double getMinBalance() {
+        return savingAccountRepository.findMinBalance();
+    }
 }

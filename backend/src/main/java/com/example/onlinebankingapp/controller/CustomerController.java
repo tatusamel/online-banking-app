@@ -8,6 +8,7 @@ import com.example.onlinebankingapp.view.converter.CustomerDTOConverter;
 import com.example.onlinebankingapp.view.dto.AccountDTO;
 import com.example.onlinebankingapp.view.dto.CustomerDTO;
 import com.example.onlinebankingapp.view.dto.LoanDTO;
+import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,9 +73,19 @@ public class CustomerController {
         return new ResponseEntity<>(accountService.getAccountsByCustomerId(customerId), HttpStatus.OK);
     }
 
-    @GetMapping("/customers/{customerId}/loans")
+    @GetMapping("/{customerId}/loans")
     public List<LoanDTO> getLoansByCustomerId(@PathVariable Long customerId) {
         return loanService.getLoansByCustomerId(customerId);
+    }
+
+    @GetMapping("/{customerId}/transactions/top10")
+    public List<TransactionDTO> get10MostRecentTransactionsByCustomerId(@PathVariable Long customerId) {
+        return customerService.get10MostRecentTransactionsByCustomerId(customerId);
+    }
+
+    @GetMapping("number-of-customers")
+    public ResponseEntity<Integer> getNumberOfCustomers() {
+        return new ResponseEntity<>(customerService.getNumberOfCustomers(), HttpStatus.OK);
     }
 
 }

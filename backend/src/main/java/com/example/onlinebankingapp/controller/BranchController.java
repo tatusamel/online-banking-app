@@ -1,7 +1,7 @@
 package com.example.onlinebankingapp.controller;
 
-import com.example.onlinebankingapp.model.entities.Branch;
 import com.example.onlinebankingapp.model.requests.BranchRequest;
+import com.example.onlinebankingapp.service.AccountService;
 import com.example.onlinebankingapp.service.BranchService;
 import com.example.onlinebankingapp.view.converter.BranchDTOConverter;
 import com.example.onlinebankingapp.view.dto.BranchDTO;
@@ -19,12 +19,15 @@ public class BranchController {
 
     private final BranchService branchService;
     private final BranchDTOConverter branchDTOConverter;
+    private final AccountService accountService;
 
     @Autowired
     public BranchController(BranchService branchService,
-                            BranchDTOConverter branchDTOConverter) {
+                            BranchDTOConverter branchDTOConverter,
+                            AccountService accountService) {
         this.branchService = branchService;
         this.branchDTOConverter = branchDTOConverter;
+        this.accountService = accountService;
     }
 
     @GetMapping
@@ -58,6 +61,12 @@ public class BranchController {
         branchService.deleteBranch(branchId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
+    }
+
+    @GetMapping("/{branchId}/total-money")
+    public ResponseEntity<Double> getTotalMoneyByBranchId(@PathVariable Long branchId) {
+        Double totalDeposit = accountService.getTotalMoneyByBranchId(branchId);
+        return new ResponseEntity<>(totalDeposit, HttpStatus.OK);
     }
 
 

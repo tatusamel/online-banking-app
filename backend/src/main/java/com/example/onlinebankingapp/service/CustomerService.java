@@ -3,12 +3,16 @@ package com.example.onlinebankingapp.service;
 import com.example.onlinebankingapp.model.entities.*;
 import com.example.onlinebankingapp.model.repositories.CustomerRepository;
 import com.example.onlinebankingapp.model.requests.CustomerRequest;
+import com.example.onlinebankingapp.view.converter.TransactionDTOConverter;
+import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -16,14 +20,17 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final UserActionService userActionService;
     private final PasswordEncoder passwordEncoder;
+    private final TransactionDTOConverter transactionDTOConverter;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository,
                            UserActionService userActionService,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           TransactionDTOConverter transactionDTOConverter) {
         this.customerRepository = customerRepository;
         this.userActionService = userActionService;
         this.passwordEncoder = passwordEncoder;
+        this.transactionDTOConverter = transactionDTOConverter;
     }
 
     public List<Customer> getAll() {
@@ -70,4 +77,14 @@ public class CustomerService {
         return customer;
     }
 
+    public List<TransactionDTO> get10MostRecentTransactionsByCustomerId(Long customerId) {
+        return customerRepository.find10MostRecentTransactionsByCustomerId(customerId, PageRequest.of(0, 10))
+                .stream()
+                .map(transactionDTOConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public Integer getNumberOfCustomers() {
+        return customerRepository.findNumberOfCustomers();
+    }
 }

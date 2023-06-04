@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -25,4 +27,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Transactional
     @Query("SELECT t FROM Transaction t WHERE t.transactionType = 'DEPOSIT' AND t.transactionDate BETWEEN :startDate AND :endDate")
     List<Transaction> findDepositsWithinPeriod(Date startDate, Date endDate);
+
+
+    @Transactional
+    @Query("SELECT COUNT(t) FROM Transaction t WHERE t.transactionDate >= :date ORDER BY COUNT(t) DESC")
+    List<Transaction> findCustomersWithTheMostNumberOfTransactions(LocalDate date);
 }

@@ -85,4 +85,30 @@ public class AccountController {
     public List<BillDTO> getPaidBillsByAccountId(@PathVariable String accountNumber) {
         return billService.getPaidBillsByAccountId(accountNumber);
     }
+
+    @GetMapping("total-balance")
+    public ResponseEntity<Double> getTotalBalance() {
+        return new ResponseEntity<>(accountService.getTotalBalance(), HttpStatus.OK);
+    }
+
+    @GetMapping("total-balance/{customerId}")
+    public ResponseEntity<Double> getTotalBalanceByCustomerId(@PathVariable Long customerId) {
+        return new ResponseEntity<>(accountService.getTotalBalanceByCustomerId(customerId), HttpStatus.OK);
+    }
+
+    @GetMapping("average-balance/{accountType}")
+    public ResponseEntity<Double> getAvgBalanceByAccountType(@PathVariable String accountType) {
+        return new ResponseEntity<> (accountService.getAvgBalanceByAccountType(accountType), HttpStatus.OK);
+    }
+
+    @GetMapping("/number-of-accounts/{accountType}")
+    public ResponseEntity<Integer> getNumberOfAccountsByAccountType(@PathVariable String accountType) {
+        return new ResponseEntity<>(accountService.getNumberOfAccountsByAccountType(accountType), HttpStatus.OK);
+    }
+
+    @GetMapping("/max-balance")
+    public ResponseEntity<Integer> getMaxBalance() {
+        return new ResponseEntity<>(accountService.getMaxBalance(), HttpStatus.OK);
+    }
+
 }

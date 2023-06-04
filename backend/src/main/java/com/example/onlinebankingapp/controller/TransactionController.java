@@ -59,10 +59,14 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/transactions/{accountNumber}")
+    @GetMapping("/{accountNumber}")
     public List<TransactionDTO> getTransactionsByAccountNumber(@PathVariable String accountNumber) {
         return transactionService.getAllTransactionsByAccountNumber(accountNumber);
     }
 
+    @GetMapping("/most-transactions")
+    public List<TransactionDTO> getMostTransactions() {
+        return transactionService.getCustomersWithTheMostNumberOfTransactions();
+    }
 
 }

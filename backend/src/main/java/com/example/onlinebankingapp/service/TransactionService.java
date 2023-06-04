@@ -10,6 +10,7 @@ import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -117,5 +118,13 @@ public class TransactionService {
 
     public List<Transaction> getDepositsWithinPeriod(Date startDate, Date endDate) {
         return transactionRepository.findDepositsWithinPeriod(startDate, endDate);
+    }
+
+    // get customers with the most number of transactions in last 3 months
+    public List<TransactionDTO> getCustomersWithTheMostNumberOfTransactions() {
+        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
+        return transactionRepository.findCustomersWithTheMostNumberOfTransactions(threeMonthsAgo).stream()
+                .map(transactionDTOConverter::convertToDto)
+                .collect(Collectors.toList());
     }
 }
