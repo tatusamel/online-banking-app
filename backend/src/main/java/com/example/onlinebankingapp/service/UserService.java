@@ -80,21 +80,6 @@ public class UserService {
         return null;
     }
 
-    public User login(LoginRequest loginRequest) {
-        // Find the user by email
-        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            // Check if the password matches
-            if (user.getPassword().equals(loginRequest.getPassword())) {
-                // Password is correct, return the user object
-                return user;
-            }
-        }
-        // Invalid credentials, return null
-        return null;
-    }
-
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));

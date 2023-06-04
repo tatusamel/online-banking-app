@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 public class TransactionDTO {
-
+    private Long transactionId;
     private Double amount;
     private Date transactionDate;
     private TransactionType TransactionType;
