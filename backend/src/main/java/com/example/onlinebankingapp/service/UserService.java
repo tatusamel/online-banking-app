@@ -1,5 +1,6 @@
 package com.example.onlinebankingapp.service;
 
+import com.example.onlinebankingapp.model.requests.LoginRequest;
 import com.example.onlinebankingapp.model.entities.User;
 import com.example.onlinebankingapp.model.repositories.UserRepository;
 import com.example.onlinebankingapp.model.requests.UserRequest;
@@ -62,6 +63,36 @@ public class UserService {
 
     public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    public User login(LoginRequest loginRequest) {
+        // Find the user by email
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            // Check if the password matches
+            if (user.getPassword().equals(loginRequest.getPassword())) {
+                // Password is correct, return the user object
+                return user;
+            }
+        }
+        // Invalid credentials, return null
+        return null;
+    }
+
+    public User login(LoginRequest loginRequest) {
+        // Find the user by email
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            // Check if the password matches
+            if (user.getPassword().equals(loginRequest.getPassword())) {
+                // Password is correct, return the user object
+                return user;
+            }
+        }
+        // Invalid credentials, return null
+        return null;
     }
 
     public User getUserById(Long id) {
