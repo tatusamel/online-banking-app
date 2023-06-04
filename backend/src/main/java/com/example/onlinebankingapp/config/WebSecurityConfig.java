@@ -31,7 +31,7 @@ public class WebSecurityConfig {
         @Override
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:3000") // replace with your client origin
+                    .allowedOrigins("http://localhost:3000", "http://localhost:80", "http://localhost") // replace with your client origin
                     .allowedMethods("GET", "POST", "PUT", "DELETE")
                     .allowedHeaders("*")
                     .allowCredentials(true);

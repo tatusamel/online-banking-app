@@ -6,11 +6,75 @@ import {
   Link,
   Box,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
-import { Link as RouteLink } from 'react-router-dom';
+import { Link as RouteLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const LoginPage = () => {
   const formBackground = useColorModeValue('gray.100', 'gray.700');
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  const loginToast = () => {
+    toast({
+      title: 'Success.',
+      description: 'Logged in successfully.',
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    });
+  };
+
+  const handleLogin = async () => {
+    try {
+      const emailInput = document.getElementById('email') as HTMLInputElement;
+      const passwordInput = document.getElementById('password') as HTMLInputElement;
+
+      const email = emailInput?.value;
+      const password = passwordInput?.value;
+
+      const response = await axios.post('http://localhost:8080/login', {
+        email: email,
+        password: password,
+      });
+
+      if (response.data.success) {
+        // Set userId in localStorage
+        localStorage.setItem('userId', response.data.userId);
+
+        loginToast();
+        navigate('/home'); // Redirect to home page if login is successful
+      } else {
+        toast({
+          title: 'Error.',
+          description: 'Invalid credentials.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    } catch (error: any) {
+      if (error.response.status == 401) {
+        toast({
+          title: 'Error.',
+          description: 'Invalid credentials.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+      else {
+        toast({
+          title: 'An error occurred when sending the request.',
+          status: 'error',
+          isClosable: true,
+        });
+
+      }
+    }
+  };
+
 
   return (
     <Flex h="100vh" alignItems="center" justifyContent="center">
@@ -24,6 +88,7 @@ export const LoginPage = () => {
       >
         <Heading mb={6}>Log In</Heading>
         <Input
+          id="email"
           placeholder="johndoe@gmail.com"
           type="email"
           variant="filled"
@@ -32,6 +97,7 @@ export const LoginPage = () => {
           borderWidth="2px"
         />
         <Input
+          id="password"
           placeholder="**********"
           type="password"
           variant="filled"
@@ -39,7 +105,7 @@ export const LoginPage = () => {
           borderColor="white"
           borderWidth="2px"
         />
-        <Button colorScheme="teal" mb={8}>
+        <Button colorScheme="teal" onClick={handleLogin} mb={8}>
           Log In
         </Button>
         <Box>

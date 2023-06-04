@@ -8,52 +8,64 @@ import {
   Box,
   FormControl,
   FormLabel,
-  useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { Link as RouteLink } from 'react-router-dom';
+import { Link as RouteLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useToast } from '@chakra-ui/react';
 
 export const RegisterPage = () => {
   const formBackground = useColorModeValue('gray.100', 'gray.700');
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  const registerToast = () => {
+    toast({
+      title: 'Success.',
+      description: 'Your account is created.',
+      status: 'success',
+      duration: 9000,
+      isClosable: true,
+    });
+  };
 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
+    phone: '', // Add phone field to the formData state
+    address: '', // Add address field to the formData state
   });
 
-  
-
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       console.log(formData);
-      const response = await axios.post('http://localhost:8080/users', formData);
-      console.log(response.data); // Assuming the response contains the created user data
-  
-      // Reset the form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-      });
+      const response = await axios.post('http://localhost:8080/customers/insert', formData);
+      console.log(response.data);
+
+      registerToast();
+      navigate('/login');
     } catch (error) {
       console.error(error);
+      toast({
+        title: 'Error',
+        description: 'Registration failed. Please try again.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
-  
 
   return (
     <Flex h="100vh" alignItems="center" justifyContent="center">
@@ -114,7 +126,33 @@ export const RegisterPage = () => {
               value={formData.password}
               onChange={handleChange}
               variant="filled"
-              mb={6}
+              mb={3}
+              borderColor="white"
+              borderWidth="2px"
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Phone</FormLabel>
+            <Input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              variant="filled"
+              mb={3}
+              borderColor="white"
+              borderWidth="2px"
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Address</FormLabel>
+            <Input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              variant="filled"
+              mb={3}
               borderColor="white"
               borderWidth="2px"
             />
@@ -132,5 +170,4 @@ export const RegisterPage = () => {
       </Flex>
     </Flex>
   );
-}
-
+};
