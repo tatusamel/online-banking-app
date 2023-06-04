@@ -114,7 +114,7 @@ public class AccountService {
     }
 
     public Double getAvgBalanceByAccountType(String accountType) {
-        return accountRepository.findAvgBalanceByAccountType(accountType);
+        return accountRepository.findAvgBalanceByAccountType(AccountType.valueOf(accountType));
     }
 
     public List<AccountDTO> getLast10CreatedAccounts() {

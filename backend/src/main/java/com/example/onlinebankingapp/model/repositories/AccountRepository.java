@@ -1,6 +1,7 @@
 package com.example.onlinebankingapp.model.repositories;
 
 import com.example.onlinebankingapp.model.entities.Account;
+import com.example.onlinebankingapp.model.enums.AccountType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,7 +40,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Transactional
     @Query("SELECT avg(a.balance) FROM Account a WHERE a.accountType = :accountType")
-    Double findAvgBalanceByAccountType(String accountType);
+    Double findAvgBalanceByAccountType(AccountType accountType);
 
     @Transactional
     @Query("SELECT a FROM Account a ")

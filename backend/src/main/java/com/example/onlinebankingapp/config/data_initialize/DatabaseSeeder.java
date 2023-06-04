@@ -5,12 +5,11 @@ import com.example.onlinebankingapp.model.enums.AccountType;
 import com.example.onlinebankingapp.model.enums.TransactionType;
 import com.example.onlinebankingapp.model.repositories.*;
 import com.example.onlinebankingapp.service.UserActionService;
+import com.github.javafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import com.github.javafaker.Faker;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -55,17 +54,37 @@ public class DatabaseSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         Faker faker = new Faker();
+        createCustomersHardCoded();
         createCustomers(faker);
         createBranches(faker);
         createSavingAccounts(faker);
-        //createCheckingAccounts(faker);
-        //createCreditCardAccounts(faker);
+        createCheckingAccounts(faker);
+        createCreditCardAccounts(faker);
         createTransactions(faker);
 
-    }
 
+    }
+    public void createCustomersHardCoded() {
+        Customer customer = new Customer();
+        customer.setFirstName("John");
+        customer.setLastName("Doe");
+        customer.setEmail("a@a");
+        customer.setPassword(passwordEncoder.encode("a"));
+        customer.setPhone("123");
+        customer.setAddress("terme");
+        customerRepository.save(customer);
+
+        Customer c2 = new Customer();
+        c2.setFirstName("Serhat");
+        c2.setLastName("Gundem");
+        c2.setEmail("b@b");
+        c2.setPassword(passwordEncoder.encode("b"));
+        c2.setPhone("123");
+        c2.setAddress("samsun");
+        customerRepository.save(c2);
+    }
     public void createCustomers(Faker faker) {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             Customer customer = new Customer();
             customer.setFirstName(faker.name().firstName());
             customer.setLastName(faker.name().lastName());
