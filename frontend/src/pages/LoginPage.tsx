@@ -55,7 +55,7 @@ export const LoginPage = () => {
         });
       }
     } catch (error: any) {
-      if (error.response.status == 401) {
+      if (error.response.status == 401 || error.response.status == 404) {
         toast({
           title: 'Error.',
           description: 'Invalid credentials.',
