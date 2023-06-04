@@ -3,6 +3,7 @@ package com.example.onlinebankingapp.controller;
 
 import com.example.onlinebankingapp.model.entities.User;
 import com.example.onlinebankingapp.model.requests.LoginRequest;
+import com.example.onlinebankingapp.service.UserActionService;
 import com.example.onlinebankingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,20 +15,25 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final UserActionService userActionService;
 
 
     @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService,
+                          UserActionService userActionService) {
         this.userService = userService;
+        this.userActionService = userActionService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
         // Find the user by email
-        User optionalUser = userService.login(loginRequest);
-        if (optionalUser != null) {
-            return ResponseEntity.ok(optionalUser);
+        User user = userService.login(loginRequest);
+        if (user != null) {
+            userActionService.userLoginSuccessfulAction(user.getId());
+            return ResponseEntity.ok(user);
         }
+        userActionService.userLoginFailedAction(user.getId());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 

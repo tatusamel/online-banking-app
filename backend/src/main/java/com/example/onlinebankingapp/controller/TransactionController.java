@@ -1,6 +1,5 @@
 package com.example.onlinebankingapp.controller;
 
-import com.example.onlinebankingapp.model.entities.Transaction;
 import com.example.onlinebankingapp.model.requests.TransactionRequest;
 import com.example.onlinebankingapp.service.TransactionService;
 import com.example.onlinebankingapp.view.converter.TransactionDTOConverter;
@@ -44,7 +43,7 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<TransactionDTO> insertTransaction(@RequestBody TransactionRequest transactionRequest) {
-        TransactionDTO transactionDTO = transactionDTOConverter.convertToDto(transactionService.insertTransaction(transactionRequest));
+        TransactionDTO transactionDTO = transactionDTOConverter.convertToDto(transactionService.createTransaction(transactionRequest));
         return new ResponseEntity<>(transactionDTO, HttpStatus.CREATED);
     }
 

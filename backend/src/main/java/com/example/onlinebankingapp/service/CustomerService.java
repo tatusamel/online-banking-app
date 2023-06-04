@@ -17,10 +17,13 @@ import java.util.Optional;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final UserActionService userActionService;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository,
+                           UserActionService userActionService) {
         this.customerRepository = customerRepository;
+        this.userActionService = userActionService;
     }
 
     public List<Customer> getAll() {

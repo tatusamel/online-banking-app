@@ -24,15 +24,19 @@ public class SavingAccountService {
     private final SavingAccountRepository savingAccountRepository;
     private final BranchService branchService;
     private final CustomerService customerService;
+    private final UserActionService userActionService;
+
 
     @Autowired
     public SavingAccountService(SavingAccountRepository savingAccountRepository,
                                 BranchService branchService,
-                                CustomerService customerService)
+                                CustomerService customerService,
+                                UserActionService userActionService)
     {
         this.savingAccountRepository = savingAccountRepository;
         this.branchService = branchService;
         this.customerService = customerService;
+        this.userActionService = userActionService;
     }
 
     public List<SavingAccount> getAll() {
@@ -48,6 +52,7 @@ public class SavingAccountService {
 
         SavingAccount newAccount = new SavingAccount();
         mapRequestToSavingAccount(newAccount, accountRequest);
+        userActionService.accountCreatedAction(accountRequest.getCustomerId(), accountRequest.getAccountNumber());
         return savingAccountRepository.save(newAccount);
 
     }
@@ -56,6 +61,7 @@ public class SavingAccountService {
 
         SavingAccount accountToUpdate = this.getAccountById(accountId);
         mapRequestToSavingAccount(accountToUpdate, accountRequest);
+        userActionService.accountUpdatedAction(accountRequest.getCustomerId(), accountRequest.getAccountNumber());
         return savingAccountRepository.save(accountToUpdate);
 
     }
@@ -63,6 +69,7 @@ public class SavingAccountService {
     public void deleteAccount(Long accountId) {
 
         SavingAccount accountToDelete = this.getAccountById(accountId);
+        userActionService.accountDeletedAction(accountToDelete.getCustomer().getId(), accountToDelete.getAccountNumber());
         savingAccountRepository.delete(accountToDelete);
     }
 

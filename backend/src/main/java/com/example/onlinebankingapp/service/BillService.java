@@ -20,15 +20,18 @@ public class BillService {
     private final BillRepository billRepository;
     private final AccountService accountService;
     private final BillDTOConverter billDTOConverter;
+    private final UserActionService userActionService;
 
     @Autowired
     public BillService(BillRepository billRepository,
                        AccountService accountService,
-                       BillDTOConverter billDTOConverter)
+                       BillDTOConverter billDTOConverter,
+                       UserActionService userActionService)
     {
         this.billRepository = billRepository;
         this.accountService = accountService;
         this.billDTOConverter = billDTOConverter;
+        this.userActionService = userActionService;
     }
 
     public List<Bill> getAll() {
@@ -91,5 +94,23 @@ public class BillService {
         }
 
         return bill;
+    }
+
+    public BillDTO payBill(Long billId) {
+        Bill bill = this.getBillById(billId);
+
+        if ( bill.getStatus().equals(BillStatus.PAID) ) {
+            throw new IllegalArgumentException("Bill is already paid");
+        }
+
+        if ( bill.getAmount() > bill.getAccount().getBalance() ) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+        bill.getAccount().setBalance(bill.getAccount().getBalance() - bill.getAmount());
+        bill.setStatus(BillStatus.PAID);
+
+        accountService.saveAccount(bill.getAccount());
+        userActionService.billPaidAction(bill.getAccount().getCustomer().getId(), bill.getId());
+        return billDTOConverter.convertToDto(billRepository.save(bill));
     }
 }

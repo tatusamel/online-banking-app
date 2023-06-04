@@ -59,4 +59,10 @@ public class BillController {
         billService.deleteBill(billId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/pay/{bill_id}")
+    public ResponseEntity<BillDTO> payBill(@PathVariable("bill_id") Long billId) {
+        BillDTO billDTO = billService.payBill(billId);
+        return new ResponseEntity<>(billDTO, HttpStatus.OK);
+    }
 }

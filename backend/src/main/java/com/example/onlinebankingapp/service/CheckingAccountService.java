@@ -26,14 +26,17 @@ public class CheckingAccountService {
     private final CheckingAccountRepository checkingAccountRepository;
     private final BranchService branchService;
     private final CustomerService customerService;
+    private final UserActionService userActionService;
 
     @Autowired
     public CheckingAccountService( CheckingAccountRepository checkingAccountRepository,
                                    BranchService branchService,
-                                   CustomerService customerService) {
+                                   CustomerService customerService,
+                                   UserActionService userActionService ){
         this.branchService = branchService;
         this.checkingAccountRepository = checkingAccountRepository;
         this.customerService = customerService;
+        this.userActionService = userActionService;
     }
 
     public List<CheckingAccount> getAll(){
@@ -45,24 +48,27 @@ public class CheckingAccountService {
                 .orElseThrow( () -> new NoSuchElementException("No Checking Account with id: " + accountId));
     }
 
-    public CheckingAccount insertAccount(CheckingAccountRequest checkingAccountRequest) {
+    public CheckingAccount insertAccount(CheckingAccountRequest request) {
 
         CheckingAccount checkingAccount = new CheckingAccount();
-        mapRequestToCheckingAccount(checkingAccountRequest, checkingAccount);
+        mapRequestToCheckingAccount(request, checkingAccount);
+        userActionService.accountCreatedAction(request.getCustomerId(), request.getAccountNumber());
         return checkingAccountRepository.save(checkingAccount);
     }
 
-    public CheckingAccount updateAccount(Long accountId,CheckingAccountRequest checkingAccountRequest) {
+    public CheckingAccount updateAccount(Long accountId,CheckingAccountRequest request) {
 
 
         CheckingAccount checkingAccount = this.getAccountById(accountId);
-        mapRequestToCheckingAccount(checkingAccountRequest, checkingAccount);
+        mapRequestToCheckingAccount(request, checkingAccount);
+        userActionService.accountUpdatedAction(request.getCustomerId(), request.getAccountNumber());
         return checkingAccountRepository.save(checkingAccount);
 
     }
 
     public void deleteAccount(Long accountId) {
         CheckingAccount accountToDelete = this.getAccountById(accountId);
+        userActionService.accountDeletedAction(accountToDelete.getCustomer().getId(), accountToDelete.getAccountNumber());
         checkingAccountRepository.delete(accountToDelete);
     }
 

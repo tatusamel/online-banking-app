@@ -24,16 +24,19 @@ public class CreditCardAccountService {
 
     private final CreditCardAccountRepository creditCardAccountRepository;
     private final BranchService branchService;
-
     private final CustomerService customerService;
+    private final UserActionService userActionService;
+
 
     @Autowired
     public CreditCardAccountService(CreditCardAccountRepository creditCardAccountRepository,
                                     BranchService branchService,
-                                    CustomerService customerService) {
+                                    CustomerService customerService,
+                                    UserActionService userActionService) {
         this.creditCardAccountRepository = creditCardAccountRepository;
         this.branchService = branchService;
         this.customerService = customerService;
+        this.userActionService = userActionService;
     }
 
     public List<CreditCardAccount> getAll() {
@@ -49,6 +52,7 @@ public class CreditCardAccountService {
 
         CreditCardAccount newAccount = new CreditCardAccount();
         mapRequestToCreditCardAccount(accountRequest, newAccount);
+        userActionService.accountCreatedAction(accountRequest.getCustomerId(), accountRequest.getAccountNumber());
         return creditCardAccountRepository.save(newAccount);
 
     }
@@ -56,12 +60,14 @@ public class CreditCardAccountService {
     public CreditCardAccount updateAccount(Long accountId, CreditCardAccountRequest accountRequest) {
         CreditCardAccount accountToUpdate = this.getAccountById(accountId);
         mapRequestToCreditCardAccount(accountRequest, accountToUpdate);
+        userActionService.accountUpdatedAction(accountRequest.getCustomerId(), accountRequest.getAccountNumber());
         return creditCardAccountRepository.save(accountToUpdate);
 
     }
 
     public void deleteAccount(Long accountId) {
         CreditCardAccount account = this.getAccountById(accountId);
+        userActionService.accountDeletedAction(account.getCustomer().getId(), account.getAccountNumber());
         creditCardAccountRepository.delete(account);
     }
 

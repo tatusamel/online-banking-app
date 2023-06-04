@@ -20,17 +20,20 @@ public class AccountService {
     private final BranchService branchService;
     private final CustomerService customerService;
     private final AccountDTOConverter accountDTOConverter;
+    private final UserActionService userActionService;
 
     @Autowired
     public AccountService(AccountRepository accountRepository,
                           BranchService branchService,
                           CustomerService customerService,
-                          AccountDTOConverter accountDTOConverter)
+                          AccountDTOConverter accountDTOConverter,
+                          UserActionService userActionService)
     {
         this.accountRepository = accountRepository;
         this.branchService = branchService;
         this.customerService = customerService;
         this.accountDTOConverter = accountDTOConverter;
+        this.userActionService = userActionService;
     }
 
     public List<Account> getAll() {
@@ -45,6 +48,8 @@ public class AccountService {
 
         Account newAccount = new Account();
         mapRequestToAccount(accountRequest, newAccount);
+        userActionService.accountCreatedAction(accountRequest.getCustomerId(),
+                accountRequest.getAccountNumber());
         return accountRepository.save(newAccount);
 
     }
@@ -52,12 +57,14 @@ public class AccountService {
     public Account updateAccount(Long accountId, AccountRequest accountRequest) {
         Account accountToUpdate = this.getAccountById(accountId);
         mapRequestToAccount(accountRequest, accountToUpdate);
+        userActionService.accountUpdatedAction(accountRequest.getCustomerId(), accountRequest.getAccountNumber());
         return accountRepository.save(accountToUpdate);
 
     }
 
     public void deleteAccount(Long accountId) {
         Account account = this.getAccountById(accountId);
+        userActionService.accountDeletedAction(account.getCustomer().getId(), account.getAccountNumber());
         accountRepository.delete(account);
     }
 
@@ -87,5 +94,9 @@ public class AccountService {
         account.setAccountType(AccountType.valueOf(request.getAccountType()));
 
         return account;
+    }
+
+    public Account saveAccount(Account account) {
+        return accountRepository.save(account);
     }
 }

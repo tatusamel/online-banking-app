@@ -21,14 +21,17 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountService accountService;
     private final TransactionDTOConverter transactionDTOConverter;
+    private final UserActionService userActionService;
     @Autowired
     public TransactionService(TransactionRepository transactionRepository,
                               AccountService accountService,
-                              TransactionDTOConverter transactionDTOConverter)
+                              TransactionDTOConverter transactionDTOConverter,
+                              UserActionService userActionService)
     {
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
         this.transactionDTOConverter = transactionDTOConverter;
+        this.userActionService = userActionService;
     }
 
     public List<Transaction> getAll() {
@@ -40,21 +43,23 @@ public class TransactionService {
                 .orElseThrow(() -> new NoSuchElementException("No Transaction with id: " + transactionId));
     }
 
-    public Transaction insertTransaction(TransactionRequest request) {
+    public Transaction createTransaction(TransactionRequest request) {
         Transaction transaction = new Transaction();
         mapRequestToTransaction(request, transaction);
+        userActionService.transactionCreatedAction(transaction.getFromAccount().getCustomer().getId(), transaction);
         return transactionRepository.save(transaction);
     }
 
     public Transaction updateTransaction(Long transactionId, TransactionRequest request) {
         Transaction transaction = this.getTransactionById(transactionId);
         mapRequestToTransaction(request, transaction);
+        userActionService.transactionUpdatedAction(transaction.getFromAccount().getCustomer().getId(), transaction);
         return transactionRepository.save(transaction);
     }
 
     public void deleteTransaction(Long transactionId) {
-        Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new NoSuchElementException("No Transaction with id: " + transactionId));
+        Transaction transaction = this.getTransactionById(transactionId);
+        userActionService.transactionDeletedAction(transaction.getFromAccount().getCustomer().getId(), transaction);
         transactionRepository.delete(transaction);
     }
 
@@ -87,6 +92,14 @@ public class TransactionService {
     public Transaction mapRequestToTransaction(TransactionRequest request, Transaction transaction) {
         Account fromAccount = accountService.getAccountById(request.getFromAccountId());
         Account toAccount = accountService.getAccountById(request.getToAccountId());
+
+        if ( fromAccount.getBalance() < request.getAmount() ) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+        fromAccount.setBalance(fromAccount.getBalance() - request.getAmount());
+        toAccount.setBalance(toAccount.getBalance() + request.getAmount());
+        accountService.saveAccount(fromAccount);
+        accountService.saveAccount(toAccount);
 
         transaction.setAmount(request.getAmount());
         transaction.setTransactionDate(request.getTransactionDate());

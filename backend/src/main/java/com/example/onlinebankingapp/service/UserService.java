@@ -66,6 +66,8 @@ public class UserService {
     }
 
     public User login(LoginRequest loginRequest) {
+
+
         // Find the user by email
         Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
         if (optionalUser.isPresent()) {

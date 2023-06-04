@@ -6,6 +6,7 @@ import com.example.onlinebankingapp.model.requests.CreditCardAccountRequest;
 import com.example.onlinebankingapp.model.requests.SavingAccountRequest;
 import com.example.onlinebankingapp.service.CreditCardAccountService;
 import com.example.onlinebankingapp.service.SavingAccountService;
+import com.example.onlinebankingapp.service.UserActionService;
 import com.example.onlinebankingapp.view.converter.CreditCardAccountDTOConverter;
 import com.example.onlinebankingapp.view.dto.CreditCardAccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +45,14 @@ public class CreditCardAccountController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<CreditCardAccountDTO> insertAccount(@RequestBody CreditCardAccountRequest creditCardAccountRequest) {
-        CreditCardAccountDTO creditCardAccountDTO = creditCardAccountDTOConverter.convertToDto(creditCardAccountService.insertAccount(creditCardAccountRequest));
+    public ResponseEntity<CreditCardAccountDTO> insertAccount(@RequestBody CreditCardAccountRequest request) {
+        CreditCardAccountDTO creditCardAccountDTO = creditCardAccountDTOConverter.convertToDto(creditCardAccountService.insertAccount(request));
         return new ResponseEntity<>(creditCardAccountDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{accountId}")
-    public ResponseEntity<CreditCardAccountDTO> updateAccount(@PathVariable Long accountId, @RequestBody CreditCardAccountRequest accountRequest) {
-        CreditCardAccountDTO creditCardAccountDTO =  creditCardAccountDTOConverter.convertToDto(creditCardAccountService.updateAccount(accountId,accountRequest));
+    public ResponseEntity<CreditCardAccountDTO> updateAccount(@PathVariable Long accountId, @RequestBody CreditCardAccountRequest request) {
+        CreditCardAccountDTO creditCardAccountDTO =  creditCardAccountDTOConverter.convertToDto(creditCardAccountService.updateAccount(accountId,request));
         return new ResponseEntity<>(creditCardAccountDTO, HttpStatus.OK);
     }
 
