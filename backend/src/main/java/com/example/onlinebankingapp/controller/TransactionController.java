@@ -3,6 +3,7 @@ package com.example.onlinebankingapp.controller;
 import com.example.onlinebankingapp.model.requests.TransactionRequest;
 import com.example.onlinebankingapp.service.TransactionService;
 import com.example.onlinebankingapp.view.converter.TransactionDTOConverter;
+import com.example.onlinebankingapp.view.dto.CustomerDTO;
 import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,7 @@ public class TransactionController {
     }
 
     @GetMapping("/most-transactions")
-    public List<TransactionDTO> getMostTransactions() {
+    public List<CustomerDTO> getMostTransactions() {
         return transactionService.getCustomersWithTheMostNumberOfTransactions();
     }
 

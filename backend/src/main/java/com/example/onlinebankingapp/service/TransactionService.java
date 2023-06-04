@@ -1,11 +1,14 @@
 package com.example.onlinebankingapp.service;
 
 import com.example.onlinebankingapp.model.entities.Account;
+import com.example.onlinebankingapp.model.entities.Customer;
 import com.example.onlinebankingapp.model.entities.Transaction;
 import com.example.onlinebankingapp.model.enums.TransactionType;
 import com.example.onlinebankingapp.model.repositories.TransactionRepository;
 import com.example.onlinebankingapp.model.requests.TransactionRequest;
+import com.example.onlinebankingapp.view.converter.CustomerDTOConverter;
 import com.example.onlinebankingapp.view.converter.TransactionDTOConverter;
+import com.example.onlinebankingapp.view.dto.CustomerDTO;
 import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,16 +27,22 @@ public class TransactionService {
     private final AccountService accountService;
     private final TransactionDTOConverter transactionDTOConverter;
     private final UserActionService userActionService;
+    private final CustomerService customerService;
+    private final CustomerDTOConverter customerDTOConverter;
     @Autowired
     public TransactionService(TransactionRepository transactionRepository,
                               AccountService accountService,
                               TransactionDTOConverter transactionDTOConverter,
-                              UserActionService userActionService)
+                              UserActionService userActionService,
+                              CustomerService customerService,
+                              CustomerDTOConverter customerDTOConverter)
     {
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
         this.transactionDTOConverter = transactionDTOConverter;
         this.userActionService = userActionService;
+        this.customerService = customerService;
+        this.customerDTOConverter = customerDTOConverter;
     }
 
     public List<Transaction> getAll() {
@@ -121,12 +130,4 @@ public class TransactionService {
         return transactionRepository.findDepositsWithinPeriod(startDate, endDate);
     }
 
-    // get customers with the most number of transactions in last 3 months
-    public List<TransactionDTO> getCustomersWithTheMostNumberOfTransactions() {
-        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
-        Date date = Date.from(threeMonthsAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return transactionRepository.findCustomersWithTheMostNumberOfTransactions(date).stream()
-                .map(transactionDTOConverter::convertToDto)
-                .collect(Collectors.toList());
-    }
 }
