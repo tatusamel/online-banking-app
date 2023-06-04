@@ -38,6 +38,7 @@ export const LoginPage = () => {
         email: email,
         password: password,
       });
+      console.log("Response", response);
 
       if (response.status == 200) {
         // Set userId in localStorage

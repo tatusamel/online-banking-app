@@ -11,23 +11,57 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 
+const generateAccountNumber = () => {
+  const accountNumberLength = 10;
+  const accountNumberChars = '0123456789';
+  let accountNumber = '';
+
+  for (let i = 0; i < accountNumberLength; i++) {
+    const randomIndex = Math.floor(Math.random() * accountNumberChars.length);
+    accountNumber += accountNumberChars.charAt(randomIndex);
+  }
+
+  return accountNumber;
+}
+
 export const AddAccountPage = () => {
-  const [accountNumber, setAccountNumber] = useState('');
   const [balance, setBalance] = useState(0);
-  const [branchId, setBranchId] = useState('');
+  const [branches, setBranches] = useState([]);
   const [accountType, setAccountType] = useState('');
 
   const toast = useToast();
 
   const userId = localStorage.getItem('userId');
 
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/branches');
+        if (response.data.length == 0) {
+          toast({
+            title: 'There are no branches!',
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+        setBranches(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchBranches();
+  }, []);
+
+  
+
   const handleAddAccount = async () => {
     try {
       const accountRequest = {
-        accountNumber: accountNumber,
-        balance: balance,
+        accountNumber: generateAccountNumber(),
+        balance: 0,
         userId: userId,
-        branchId: branchId,
+        branchId: (document.getElementById("branch") as HTMLInputElement).value,
         accountType: accountType,
       };
 
@@ -42,7 +76,9 @@ export const AddAccountPage = () => {
       }
 
       // Send the account creation request to the backend
-      const response = await axios.post('/accounts/insert', accountRequest);
+      //TODO update for checking account, saving account, credit account
+      console.log(accountRequest);
+      const response = await axios.post('http://localhost:8080/accounts/insert', accountRequest);
 
       // Display success toast and reset the form fields
       toast({
@@ -51,12 +87,11 @@ export const AddAccountPage = () => {
         duration: 3000,
         isClosable: true,
       });
-      setAccountNumber('');
       setBalance(0);
-      setBranchId('');
       setAccountType('');
     } catch (error) {
       // Display error toast if an error occurred during account creation
+      console.log(error);
       toast({
         title: 'An error occurred when creating the account.',
         status: 'error',
@@ -71,29 +106,18 @@ export const AddAccountPage = () => {
       <Heading size="lg" mb={4}>
         Add Account
       </Heading>
-      <FormControl id="accountNumber" mb={4}>
-        <FormLabel>Account Number</FormLabel>
-        <Input
-          type="text"
-          value={accountNumber}
-          onChange={(e) => setAccountNumber(e.target.value)}
-        />
-      </FormControl>
-      <FormControl id="balance" mb={4}>
-        <FormLabel>Balance</FormLabel>
-        <Input
-          type="number"
-          value={balance}
-          onChange={(e) => setBalance(Number(e.target.value))}
-        />
-      </FormControl>
-      <FormControl id="branchId" mb={4}>
-        <FormLabel>Branch ID</FormLabel>
-        <Input
-          type="text"
-          value={branchId}
-          onChange={(e) => setBranchId(e.target.value)}
-        />
+      <FormControl id="branch" mb={4}>
+        <FormLabel>Branch</FormLabel>
+        <Select
+          // value={branches.length > 0 ? branches[0].name : null}
+          //onChange={(e) => setBranch(e.target.value)}
+        >
+          {branches.map(({id, name}) => (
+            <option key={id} value={id}>
+              {name}
+            </option>
+          ))}
+        </Select>
       </FormControl>
       <FormControl id="accountType" mb={4}>
         <FormLabel>Account Type</FormLabel>

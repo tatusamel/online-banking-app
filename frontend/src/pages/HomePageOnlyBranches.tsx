@@ -66,28 +66,6 @@ export const HomePage = () => {
     // Do nothing since we are already on the Branches tab
   };
 
-  // Sample list of user accounts
-  const userAccounts = [
-    {
-      id: 1,
-      accountNumber: '123456789',
-      balance: 5000,
-      accountType: 'Savings account',
-    },
-    {
-      id: 2,
-      accountNumber: '987654321',
-      balance: 10000,
-      accountType: 'Checking account',
-    },
-    {
-      id: 3,
-      accountNumber: '456789123',
-      balance: 15000,
-      accountType: 'Credit Card account',
-    },
-  ];
-
   return (
     <Flex h="100vh" flexDirection="column" alignItems="center">
       <Box
@@ -95,8 +73,8 @@ export const HomePage = () => {
         p={8}
         borderRadius={8}
         boxShadow="lg"
-        width="100vw"
-        maxW="60vw"
+        width="80vw"
+        maxW="900px"
       >
         <Flex justifyContent="space-between" alignItems="center" mb={8}>
           <Heading size="xl">Home Page</Heading>
@@ -125,8 +103,6 @@ export const HomePage = () => {
             <Tab>Branches</Tab>
           </TabList>
           {activeTabIndex === 0 && (
-            <Box p={8}>
-                
             <Stack spacing={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Heading size="lg">User Accounts</Heading>
@@ -138,26 +114,9 @@ export const HomePage = () => {
                   Add Account
                 </Button>
               </Flex>
-              {userAccounts.map((account) => (
-                <Card key={account.id} p={4}>
-                  <CardHeader>
-                    <Text>Account Number: {account.accountNumber}</Text>
-                    <Badge colorScheme="teal">{account.accountType}</Badge>
-                  </CardHeader>
-                  <CardBody>
-                    <Text>Balance: {account.balance}</Text>
-                    <Button
-                      size="sm"
-                      colorScheme="teal"
-                      onClick={() => handleAccountSettings(account.id)}
-                      >
-                      Account Settings
-                    </Button>
-                  </CardBody>
-                </Card>
-              ))}
+              {/* Render user accounts here */}
+              {/* ... */}
             </Stack>
-              </Box>
           )}
           {activeTabIndex === 1 && <BranchesPage />}
         </Tabs>

@@ -12,7 +12,8 @@ import { LoginPage } from "./pages/LoginPage"
 import { HomePage } from "./pages/HomePage";
 import { AddAccountPage } from "./pages/AddAccountPage";
 import { UpdateUserPage } from "./pages/UpdateUserPage";
-
+import { AddBranchPage } from "./pages/AddBranchPage";
+import { UpdateBranchPage } from "./pages/UpdateBranchPage";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,14 @@ const router = createBrowserRouter([
   {
     "path": "/user-settings",
     element: <UpdateUserPage />
+  },
+  {
+    "path": "/add-branch",
+    element: <AddBranchPage />
+  },
+  {
+    "path": "/update-branch",
+    element: <UpdateBranchPage branchId="" />
   }
 ]);
 
@@ -50,10 +59,12 @@ const root = ReactDOM.createRoot(container)
 
 
 root.render(
-  <React.StrictMode>
-    <ColorModeScript />
-    <ChakraProvider>
+  //<React.StrictMode>
+  <>
+  <ColorModeScript />
+  <ChakraProvider>
       <RouterProvider router={router} />
     </ChakraProvider>
-  </React.StrictMode>,
+      </>
+  //</React.StrictMode>,
 )
