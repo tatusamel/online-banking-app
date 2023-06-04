@@ -39,9 +39,9 @@ export const LoginPage = () => {
         password: password,
       });
 
-      if (response.data.success) {
+      if (response.status == 200) {
         // Set userId in localStorage
-        localStorage.setItem('userId', response.data.userId);
+        localStorage.setItem('userId', response.data.id);
 
         loginToast();
         navigate('/home'); // Redirect to home page if login is successful

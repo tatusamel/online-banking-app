@@ -49,7 +49,7 @@ export const HomePage = () => {
     };
 
     const handleSettings = () => {
-        navigate('/account-settings'); // Redirect to account settings page
+        navigate('/user-settings'); // Redirect to user settings page
     };
 
     const handleAddAccount = () => {

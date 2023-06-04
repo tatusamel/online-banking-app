@@ -10,11 +10,8 @@ import {
 import { RegisterPage } from "./pages/RegisterPage";
 import { LoginPage } from "./pages/LoginPage"
 import { HomePage } from "./pages/HomePage";
-import { AddAccountPage } from "./pages/AddAccount";
-
-
-const loggedIn = false;
-
+import { AddAccountPage } from "./pages/AddAccountPage";
+import { UpdateUserPage } from "./pages/UpdateUserPage";
 
 
 const router = createBrowserRouter([
@@ -37,6 +34,10 @@ const router = createBrowserRouter([
   {
     "path": "/add-account",
     element: <AddAccountPage />
+  },
+  {
+    "path": "/user-settings",
+    element: <UpdateUserPage />
   }
 ]);
 
