@@ -49,7 +49,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Transactional
     @Query("SELECT COUNT(a) FROM Account a WHERE a.accountType = :accountType")
-    Integer findNumberOfAccountsByAccountType(String accountType);
+    Integer findNumberOfAccountsByAccountType(AccountType accountType);
 
     @Transactional
     @Query("SELECT MAX(a.balance) FROM Account a")

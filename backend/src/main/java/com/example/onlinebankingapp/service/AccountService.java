@@ -124,7 +124,7 @@ public class AccountService {
     }
 
     public Integer getNumberOfAccountsByAccountType(String accountType) {
-        return accountRepository.findNumberOfAccountsByAccountType(accountType);
+        return accountRepository.findNumberOfAccountsByAccountType(AccountType.valueOf(accountType));
     }
 
     public Integer getMaxBalance() {
