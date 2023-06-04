@@ -3,15 +3,11 @@ package com.example.onlinebankingapp.service;
 import com.example.onlinebankingapp.model.entities.*;
 import com.example.onlinebankingapp.model.repositories.CustomerRepository;
 import com.example.onlinebankingapp.model.requests.CustomerRequest;
-import com.example.onlinebankingapp.view.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -36,20 +32,24 @@ public class CustomerService {
 
     }
 
-    public Customer insertCustomer(CustomerRequest customerRequest) {
+    public Customer createCustomer(CustomerRequest customerRequest) {
         Customer newCustomer = new Customer();
         mapRequestToCustomer(customerRequest, newCustomer);
-        return customerRepository.save(newCustomer);
+        Customer savedCustomer = customerRepository.save(newCustomer);
+        userActionService.userCreatedAction(savedCustomer.getId());
+        return savedCustomer;
     }
 
     public Customer updateCustomer(Long customerId, CustomerRequest customerRequest) {
         Customer customerToUpdate = this.getCustomerById(customerId);
         mapRequestToCustomer(customerRequest, customerToUpdate);
+        userActionService.userUpdatedAction(customerId);
         return customerRepository.save(customerToUpdate);
     }
 
     public void deleteCustomer(Long customerId) {
         Customer customer = this.getCustomerById(customerId);
+        userActionService.userDeletedAction(customerId);
         customerRepository.delete(customer);
     }
 

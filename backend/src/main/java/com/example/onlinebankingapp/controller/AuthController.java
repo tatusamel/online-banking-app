@@ -30,10 +30,8 @@ public class AuthController {
         // Find the user by email
         User user = userService.login(loginRequest);
         if (user != null) {
-            userActionService.userLoginSuccessfulAction(user.getId());
             return ResponseEntity.ok(user);
         }
-        userActionService.userLoginFailedAction(user.getId());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 

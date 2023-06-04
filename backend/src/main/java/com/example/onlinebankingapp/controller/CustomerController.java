@@ -1,9 +1,7 @@
 package com.example.onlinebankingapp.controller;
 
-import com.example.onlinebankingapp.model.entities.Customer;
 import com.example.onlinebankingapp.model.requests.CustomerRequest;
 import com.example.onlinebankingapp.service.AccountService;
-import com.example.onlinebankingapp.service.CheckingAccountService;
 import com.example.onlinebankingapp.service.CustomerService;
 import com.example.onlinebankingapp.service.LoanService;
 import com.example.onlinebankingapp.view.converter.CustomerDTOConverter;
@@ -53,7 +51,7 @@ public class CustomerController {
 
     @PostMapping("/insert")
     public ResponseEntity<CustomerDTO> insertCustomer(@RequestBody CustomerRequest customerRequest) {
-        CustomerDTO customerDTO =  customerDTOConverter.convertToDto(customerService.insertCustomer(customerRequest));
+        CustomerDTO customerDTO =  customerDTOConverter.convertToDto(customerService.createCustomer(customerRequest));
         return new ResponseEntity<>(customerDTO, HttpStatus.CREATED);
     }
 

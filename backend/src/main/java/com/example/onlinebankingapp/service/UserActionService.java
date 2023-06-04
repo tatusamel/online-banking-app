@@ -100,4 +100,26 @@ public class UserActionService {
                 + " Date: " + new Date(System.currentTimeMillis()));
         return userActionRepository.save(action);
     }
+    public UserAction userCreatedAction(Long userId) {
+        UserAction action = new UserAction();
+        action.setUserId(userId);
+        action.setAction("User with id: " + userId + " created his profile."
+                + " Date: " + new Date(System.currentTimeMillis()));
+        return userActionRepository.save(action);
+    }
+    public UserAction userUpdatedAction(Long userId) {
+        UserAction action = new UserAction();
+        action.setUserId(userId);
+        action.setAction("User with id: " + userId + " updated his profile."
+                + " Date: " + new Date(System.currentTimeMillis()));
+        return userActionRepository.save(action);
+    }
+
+    public UserAction userDeletedAction(Long userId) {
+        UserAction action = new UserAction();
+        action.setUserId(userId);
+        action.setAction("User with id: " + userId + " deleted his profile."
+                + " Date: " + new Date(System.currentTimeMillis()));
+        return userActionRepository.save(action);
+    }
 }

@@ -15,10 +15,13 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserActionService userActionService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+                       UserActionService userActionService) {
         this.userRepository = userRepository;
+        this.userActionService = userActionService;
     }
 
     public List<User> findAll() {
@@ -41,7 +44,10 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        userActionService.userCreatedAction(user.getId());
+        return user;
     }
     public User updateUser(Long userId, UserRequest request) {
 
@@ -53,6 +59,7 @@ public class UserService {
         // TODO: encrypt password
         user.setPassword(request.getPassword());
 
+        userActionService.userUpdatedAction(user.getId());
         return userRepository.save(user);
 
     }
@@ -61,7 +68,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void delete(User user) {
+    public void delete(Long userId) {
+        User user = this.getUserById(userId);
+        userActionService.userDeletedAction(userId);
         userRepository.delete(user);
     }
 
@@ -75,8 +84,10 @@ public class UserService {
             // Check if the password matches
             if (user.getPassword().equals(loginRequest.getPassword())) {
                 // Password is correct, return the user object
+                userActionService.userLoginSuccessfulAction(user.getId());
                 return user;
             }
+            userActionService.userLoginFailedAction(optionalUser.get().getId());
         }
         // Invalid credentials, return null
         return null;
