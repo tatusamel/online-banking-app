@@ -5,6 +5,7 @@ import com.example.onlinebankingapp.model.entities.User;
 import com.example.onlinebankingapp.model.repositories.UserRepository;
 import com.example.onlinebankingapp.model.requests.UserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +17,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserActionService userActionService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       UserActionService userActionService) {
+                       UserActionService userActionService,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userActionService = userActionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAll() {
@@ -39,8 +43,8 @@ public class UserService {
     public User createUser(UserRequest request) {
 
         User user = new User();
-        // TODO: encrypt password
-        user.setPassword(request.getPassword());
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(hashedPassword);
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
@@ -56,8 +60,8 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        // TODO: encrypt password
-        user.setPassword(request.getPassword());
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(hashedPassword);
 
         userActionService.userUpdatedAction(user.getId());
         return userRepository.save(user);
@@ -82,7 +86,8 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             // Check if the password matches
-            if (user.getPassword().equals(loginRequest.getPassword())) {
+            String passwordEntered = passwordEncoder.encode(loginRequest.getPassword());
+            if (user.getPassword().equals(passwordEntered)) {
                 // Password is correct, return the user object
                 userActionService.userLoginSuccessfulAction(user.getId());
                 return user;

@@ -4,6 +4,7 @@ import com.example.onlinebankingapp.model.entities.*;
 import com.example.onlinebankingapp.model.repositories.CustomerRepository;
 import com.example.onlinebankingapp.model.requests.CustomerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +15,15 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final UserActionService userActionService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository,
-                           UserActionService userActionService) {
+                           UserActionService userActionService,
+                           PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
         this.userActionService = userActionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Customer> getAll() {
@@ -59,8 +63,9 @@ public class CustomerService {
         customer.setEmail(customerRequest.getEmail());
         customer.setPhone(customerRequest.getPhone());
         customer.setAddress(customerRequest.getAddress());
-        // TODO:encrypt password
-        customer.setPassword(customerRequest.getPassword());
+
+        String hashedPassword = passwordEncoder.encode(customerRequest.getPassword());
+        customer.setPassword(hashedPassword);
 
         return customer;
     }
