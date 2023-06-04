@@ -19,9 +19,11 @@ import {
 } from '@chakra-ui/react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
 import { AddIcon, SettingsIcon } from '@chakra-ui/icons';
+import { MoneyTransferPage } from './MoneyTransferPage';
 
 import { BranchesPage } from './BranchesPage';
 import axios from 'axios';
+import { LogsPage } from './LogsPage';
 
 interface UserAccount {
     id: number;
@@ -37,6 +39,7 @@ export const HomePage = () => {
   const navigate = useNavigate();
   const [userAccounts, setUserAccounts] = useState<UserAccount[]>([]);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const userId = localStorage.getItem("userId");
 
   const handleAccountSettings = (accountId:any) => {};
 
@@ -52,21 +55,24 @@ export const HomePage = () => {
     ];
 
     try {
-      const accounts = await Promise.all(
+      /* const accounts = await Promise.all(
         accountEndpoints.map(async (accountEndpoint) => {
           const response = await axios.get(`http://localhost:8080/${accountEndpoint}`);
           return response.data;
         })
       );
+      */
       const branch_response = await axios.get('http://localhost:8080/branches');
       const branches = branch_response.data;
       const branches_dict: { [id: number]: string } = branches.reduce((acc: { [id: number]: string }, item: any) => {
         acc[item.id] = item.name;
         return acc;
-      }, {});
+      }, {}); 
+      const response = await axios.get(`http://localhost:8080/customers/${userId}/accounts`);
+      const accounts = response.data;
 
       const mergedAccounts = accounts.flat().map(
-        (account) => {
+        (account: any) => {
             return {
                 ...account,
                 branchName: branches_dict[account.branchId],
@@ -155,7 +161,9 @@ export const HomePage = () => {
         <Tabs index={activeTabIndex} onChange={setActiveTabIndex}>
           <TabList>
             <Tab>User Accounts</Tab>
+            <Tab>Money Transfer</Tab>
             <Tab>Branches</Tab>
+            <Tab>Logs</Tab>
           </TabList>
           {activeTabIndex === 0 && (
             <Box p={8}>
@@ -192,7 +200,9 @@ export const HomePage = () => {
               </Stack>
             </Box>
           )}
-          {activeTabIndex === 1 && <BranchesPage />}
+          {activeTabIndex === 1 && <MoneyTransferPage />}
+          {activeTabIndex === 2 && <BranchesPage />}
+          {activeTabIndex === 3 && <LogsPage />}
         </Tabs>
       </Box>
     </Flex>

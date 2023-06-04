@@ -14,11 +14,13 @@ import { AddAccountPage } from "./pages/AddAccountPage";
 import { UpdateUserPage } from "./pages/UpdateUserPage";
 import { AddBranchPage } from "./pages/AddBranchPage";
 import { UpdateBranchPage } from "./pages/UpdateBranchPage";
+import { LogsPage } from "./pages/LogsPage";
+import { MoneyTransferPage } from "./pages/MoneyTransferPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: localStorage.getItem("userId") ? <Navigate to="/home"/> : <Navigate to="/login" />,
+    element: localStorage.getItem("userId") ? <Navigate to="/home" /> : <Navigate to="/login" />,
   },
   {
     path: "/login",
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
   {
     "path": "/update-branch",
     element: <UpdateBranchPage branchId="" />
+  },
+  {
+    "path": "/logs",
+    element: <LogsPage />
+  },
+  {
+    "path": "/money-transfer",
+    element: <MoneyTransferPage />
   }
 ]);
 
@@ -59,12 +69,10 @@ const root = ReactDOM.createRoot(container)
 
 
 root.render(
-  //<React.StrictMode>
   <>
-  <ColorModeScript />
-  <ChakraProvider>
+    <ColorModeScript />
+    <ChakraProvider>
       <RouterProvider router={router} />
     </ChakraProvider>
-      </>
-  //</React.StrictMode>,
+  </>
 )
