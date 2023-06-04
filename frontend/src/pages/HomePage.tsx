@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Flex,
@@ -21,14 +21,69 @@ import { Link as RouteLink, useNavigate } from 'react-router-dom';
 import { AddIcon, SettingsIcon } from '@chakra-ui/icons';
 
 import { BranchesPage } from './BranchesPage';
+import axios from 'axios';
+
+interface UserAccount {
+    id: number;
+    accountNumber: string;
+    accountType: string;
+    balance: number;
+    branchName: string;
+  }
 
 export const HomePage = () => {
   const formBackground = useColorModeValue('gray.100', 'gray.700');
   const toast = useToast();
   const navigate = useNavigate();
+  const [userAccounts, setUserAccounts] = useState<UserAccount[]>([]);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
-  const handleAccountSettings = (accountId: number) => {};
+  const handleAccountSettings = (accountId:any) => {};
+
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = async () => {
+    const accountEndpoints = [
+      'checking-accounts',
+      'saving-accounts',
+      'credit-card-accounts',
+    ];
+
+    try {
+      const accounts = await Promise.all(
+        accountEndpoints.map(async (accountEndpoint) => {
+          const response = await axios.get(`http://localhost:8080/${accountEndpoint}`);
+          return response.data;
+        })
+      );
+      const branch_response = await axios.get('http://localhost:8080/branches');
+      const branches = branch_response.data;
+      const branches_dict: { [id: number]: string } = branches.reduce((acc: { [id: number]: string }, item: any) => {
+        acc[item.id] = item.name;
+        return acc;
+      }, {});
+
+      const mergedAccounts = accounts.flat().map(
+        (account) => {
+            return {
+                ...account,
+                branchName: branches_dict[account.branchId],
+            }
+        }
+      );
+      setUserAccounts(mergedAccounts);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'An error occurred when fetching accounts.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   const logoutToast = () => {
     toast({
@@ -65,28 +120,6 @@ export const HomePage = () => {
   const handleBranchTabClick = () => {
     // Do nothing since we are already on the Branches tab
   };
-
-  // Sample list of user accounts
-  const userAccounts = [
-    {
-      id: 1,
-      accountNumber: '123456789',
-      balance: 5000,
-      accountType: 'Savings account',
-    },
-    {
-      id: 2,
-      accountNumber: '987654321',
-      balance: 10000,
-      accountType: 'Checking account',
-    },
-    {
-      id: 3,
-      accountNumber: '456789123',
-      balance: 15000,
-      accountType: 'Credit Card account',
-    },
-  ];
 
   return (
     <Flex h="100vh" flexDirection="column" alignItems="center">
@@ -126,38 +159,38 @@ export const HomePage = () => {
           </TabList>
           {activeTabIndex === 0 && (
             <Box p={8}>
-                
-            <Stack spacing={4}>
-              <Flex justifyContent="space-between" alignItems="center">
-                <Heading size="lg">User Accounts</Heading>
-                <Button
-                  leftIcon={<AddIcon />}
-                  colorScheme="teal"
-                  onClick={handleAddAccount}
-                >
-                  Add Account
-                </Button>
-              </Flex>
-              {userAccounts.map((account) => (
-                <Card key={account.id} p={4}>
-                  <CardHeader>
-                    <Text>Account Number: {account.accountNumber}</Text>
-                    <Badge colorScheme="teal">{account.accountType}</Badge>
-                  </CardHeader>
-                  <CardBody>
-                    <Text>Balance: {account.balance}</Text>
-                    <Button
-                      size="sm"
-                      colorScheme="teal"
-                      onClick={() => handleAccountSettings(account.id)}
+              <Stack spacing={4}>
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Heading size="lg">User Accounts</Heading>
+                  <Button
+                    leftIcon={<AddIcon />}
+                    colorScheme="teal"
+                    onClick={handleAddAccount}
+                  >
+                    Add Account
+                  </Button>
+                </Flex>
+                {userAccounts.map(({id, accountNumber, accountType, balance, branchName}) => (
+                  <Card key={id} p={4}>
+                    <CardHeader>
+                      <Text>Account Number: {accountNumber}</Text>
+                      <Badge colorScheme="teal">{accountType}</Badge>
+                    </CardHeader>
+                    <CardBody>
+                      <Text>Balance: {balance}</Text>
+                      <Text>Branch: {branchName}</Text>
+                      <Button
+                        size="sm"
+                        colorScheme="teal"
+                        onClick={() => handleAccountSettings(id)}
                       >
-                      Account Settings
-                    </Button>
-                  </CardBody>
-                </Card>
-              ))}
-            </Stack>
-              </Box>
+                        Account Settings
+                      </Button>
+                    </CardBody>
+                  </Card>
+                ))}
+              </Stack>
+            </Box>
           )}
           {activeTabIndex === 1 && <BranchesPage />}
         </Tabs>
