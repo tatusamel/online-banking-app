@@ -93,12 +93,16 @@ export const MoneyTransferPage = () => {
         return;
       }
 
+      const toAccountId_response = await axios.get(`http://localhost:8080/accounts/by-name/${accountTo}`);
+      const toAccountId = toAccountId_response.data.id;
+
       const data = {
         fromAccountId: accountFrom,
-        toAccountId: accountTo,
+        toAccountId: toAccountId,
         amount: transferAmount,
       };
       // Perform the money transfer
+      console.log(data);
       const response = await axios.post('http://localhost:8080/transactions/insert', data);
 
       // Display success toast and reset form inputs

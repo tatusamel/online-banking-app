@@ -76,12 +76,12 @@ public class AccountController {
         return new ResponseEntity<>(transactionDTOS, HttpStatus.OK);
     }
 
-    @GetMapping("/accounts/{accountNumber}/bills/UNPAID")
+    @GetMapping("/{accountNumber}/bills/UNPAID")
     public List<BillDTO> getUnpaidBillsByAccountId(@PathVariable String accountNumber) {
         return billService.getUnpaidBillsByAccountId(accountNumber);
     }
 
-    @GetMapping("/accounts/{accountNumber}/bills/PAID")
+    @GetMapping("/{accountNumber}/bills/PAID")
     public List<BillDTO> getPaidBillsByAccountId(@PathVariable String accountNumber) {
         return billService.getPaidBillsByAccountId(accountNumber);
     }
@@ -111,4 +111,9 @@ public class AccountController {
         return new ResponseEntity<>(accountService.getMaxBalance(), HttpStatus.OK);
     }
 
+
+    @GetMapping("/by-name/{accountName}")
+    public AccountDTO getAccountByName(@PathVariable String accountName) {
+        return accountDTOConverter.convertToDto(accountService.getAccountByAccountNumber(accountName));
+    }
 }

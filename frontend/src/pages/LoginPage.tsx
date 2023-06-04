@@ -36,7 +36,7 @@ export const LoginPage = () => {
 
       const response = await axios.post('http://localhost:8080/login', {
         email: email,
-        password: password,
+        password: password
       });
       console.log("Response", response);
 
@@ -56,7 +56,8 @@ export const LoginPage = () => {
         });
       }
     } catch (error: any) {
-      if (error.response.status == 401 || error.response.status == 404) {
+      console.log(error);
+      if (error.response?.status === 401 || error.response?.status === 404) {
         toast({
           title: 'Error.',
           description: 'Invalid credentials.',

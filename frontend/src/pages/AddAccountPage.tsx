@@ -101,7 +101,7 @@ export const AddAccountPage = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate("/")
+      navigate("/home")
     } catch (error) {
       // Display error toast if an error occurred during account creation
       console.log(error);
