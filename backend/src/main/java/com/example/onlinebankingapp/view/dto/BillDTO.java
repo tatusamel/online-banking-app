@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class BillDTO {
-    private Long billId;
+    private Long id;
     private String name;
     private Double amount;
     private String dueDate;
