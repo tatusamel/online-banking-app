@@ -31,5 +31,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Transactional
     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.transactionDate >= :date ORDER BY COUNT(t) DESC")
-    List<Transaction> findCustomersWithTheMostNumberOfTransactions(LocalDate date);
+    List<Transaction> findCustomersWithTheMostNumberOfTransactions(Date date);
 }

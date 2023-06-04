@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -123,7 +124,8 @@ public class TransactionService {
     // get customers with the most number of transactions in last 3 months
     public List<TransactionDTO> getCustomersWithTheMostNumberOfTransactions() {
         LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
-        return transactionRepository.findCustomersWithTheMostNumberOfTransactions(threeMonthsAgo).stream()
+        Date date = Date.from(threeMonthsAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return transactionRepository.findCustomersWithTheMostNumberOfTransactions(date).stream()
                 .map(transactionDTOConverter::convertToDto)
                 .collect(Collectors.toList());
     }
