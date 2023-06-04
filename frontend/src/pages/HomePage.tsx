@@ -24,6 +24,7 @@ import { MoneyTransferPage } from './MoneyTransferPage';
 import { BranchesPage } from './BranchesPage';
 import axios from 'axios';
 import { LogsPage } from './LogsPage';
+import { StatisticsPage } from './StatisticsPage';
 
 interface UserAccount {
     id: number;
@@ -164,6 +165,7 @@ export const HomePage = () => {
             <Tab>Money Transfer</Tab>
             <Tab>Branches</Tab>
             <Tab>Logs</Tab>
+            <Tab>Statistics</Tab>
           </TabList>
           {activeTabIndex === 0 && (
             <Box p={8}>
@@ -203,6 +205,7 @@ export const HomePage = () => {
           {activeTabIndex === 1 && <MoneyTransferPage />}
           {activeTabIndex === 2 && <BranchesPage />}
           {activeTabIndex === 3 && <LogsPage />}
+          {activeTabIndex === 4 && <StatisticsPage/>}
         </Tabs>
       </Box>
     </Flex>
