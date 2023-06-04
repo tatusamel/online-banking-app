@@ -44,13 +44,13 @@ public class BillController {
 
     @PostMapping("/insert")
     public ResponseEntity<BillDTO> insertBill(@RequestBody BillRequest billRequest) {
-        BillDTO billDTO = billDTOConverter.convertToDto(billService.insertBill(billRequest));
+        BillDTO billDTO = billService.insertBill(billRequest);
         return new ResponseEntity<>(billDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{bill_id}")
     public ResponseEntity<BillDTO> updateBill(@PathVariable("bill_id") Long billId, @RequestBody BillRequest billRequest) {
-        BillDTO billDTO = billDTOConverter.convertToDto(billService.updateBill(billId, billRequest));
+        BillDTO billDTO = billService.updateBill(billId, billRequest);
         return new ResponseEntity<>(billDTO, HttpStatus.OK);
     }
 

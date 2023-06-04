@@ -8,23 +8,29 @@ import com.example.onlinebankingapp.model.repositories.BillRepository;
 import com.example.onlinebankingapp.model.repositories.LoanRepository;
 import com.example.onlinebankingapp.model.requests.BillRequest;
 import com.example.onlinebankingapp.model.requests.LoanRequest;
+import com.example.onlinebankingapp.view.converter.LoanDTOConverter;
+import com.example.onlinebankingapp.view.dto.LoanDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanService {
 
     private final LoanRepository loanRepository;
     private final AccountService accountService;
+    private final LoanDTOConverter loanDTOConverter;
 
     @Autowired
     public LoanService(LoanRepository loanRepository,
-                       AccountService accountService) {
+                       AccountService accountService,
+                       LoanDTOConverter loanDTOConverter) {
         this.loanRepository = loanRepository;
         this.accountService = accountService;
+        this.loanDTOConverter = loanDTOConverter;
     }
 
     public List<Loan> getAll() {
@@ -65,4 +71,10 @@ public class LoanService {
         return loan;
     }
 
+    public List<LoanDTO> getLoansByCustomerId(Long customerId) {
+        return loanRepository.findLoansByCustomerId(customerId)
+                .stream()
+                .map(loanDTOConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
 }

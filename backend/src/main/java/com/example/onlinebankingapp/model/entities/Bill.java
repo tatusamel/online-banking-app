@@ -1,5 +1,6 @@
 package com.example.onlinebankingapp.model.entities;
 
+import com.example.onlinebankingapp.model.enums.BillStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class Bill {
     private String name;
     private Double amount;
     private Date dueDate;
+    private BillStatus status;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

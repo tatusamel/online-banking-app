@@ -5,9 +5,11 @@ import com.example.onlinebankingapp.service.AccountService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.onlinebankingapp.service.BillService;
 import com.example.onlinebankingapp.service.TransactionService;
 import com.example.onlinebankingapp.view.converter.AccountDTOConverter;
 import com.example.onlinebankingapp.view.dto.AccountDTO;
+import com.example.onlinebankingapp.view.dto.BillDTO;
 import com.example.onlinebankingapp.view.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,13 +24,18 @@ public class AccountController {
     private final AccountService accountService;
     private final AccountDTOConverter accountDTOConverter;
     private final TransactionService transactionService;
+    private final BillService billService;
+
+
     @Autowired
     public AccountController(AccountService accountService,
                              AccountDTOConverter accountDTOConverter,
-                             TransactionService transactionService) {
+                             TransactionService transactionService,
+                             BillService billService) {
         this.accountService = accountService;
         this.accountDTOConverter = accountDTOConverter;
         this.transactionService = transactionService;
+        this.billService = billService;
     }
 
     @GetMapping()
@@ -67,5 +74,15 @@ public class AccountController {
     public ResponseEntity<List<TransactionDTO>> getTransactionsByAccountNumber(@PathVariable String accountNumber ) {
         List<TransactionDTO> transactionDTOS = transactionService.getAllTransactionsByAccountNumber(accountNumber);
         return new ResponseEntity<>(transactionDTOS, HttpStatus.OK);
+    }
+
+    @GetMapping("/accounts/{accountNumber}/bills/UNPAID")
+    public List<BillDTO> getUnpaidBillsByAccountId(@PathVariable String accountNumber) {
+        return billService.getUnpaidBillsByAccountId(accountNumber);
+    }
+
+    @GetMapping("/accounts/{accountNumber}/bills/PAID")
+    public List<BillDTO> getPaidBillsByAccountId(@PathVariable String accountNumber) {
+        return billService.getPaidBillsByAccountId(accountNumber);
     }
 }

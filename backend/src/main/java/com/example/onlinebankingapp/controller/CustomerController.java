@@ -5,9 +5,11 @@ import com.example.onlinebankingapp.model.requests.CustomerRequest;
 import com.example.onlinebankingapp.service.AccountService;
 import com.example.onlinebankingapp.service.CheckingAccountService;
 import com.example.onlinebankingapp.service.CustomerService;
+import com.example.onlinebankingapp.service.LoanService;
 import com.example.onlinebankingapp.view.converter.CustomerDTOConverter;
 import com.example.onlinebankingapp.view.dto.AccountDTO;
 import com.example.onlinebankingapp.view.dto.CustomerDTO;
+import com.example.onlinebankingapp.view.dto.LoanDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +25,16 @@ public class CustomerController {
     private final CustomerService customerService;
     private final CustomerDTOConverter customerDTOConverter;
     private final AccountService accountService;
+    private final LoanService loanService;
     @Autowired
     public CustomerController(CustomerService customerService,
                               CustomerDTOConverter customerDTOConverter,
-                              AccountService accountService) {
+                              AccountService accountService,
+                              LoanService loanService) {
         this.customerService = customerService;
         this.customerDTOConverter = customerDTOConverter;
         this.accountService = accountService;
+        this.loanService = loanService;
     }
 
     @GetMapping()
@@ -67,6 +72,11 @@ public class CustomerController {
     @GetMapping("/{customerId}/accounts")
     public ResponseEntity<List<AccountDTO>> getCustomerAccounts(@PathVariable Long customerId) {
         return new ResponseEntity<>(accountService.getAccountsByCustomerId(customerId), HttpStatus.OK);
+    }
+
+    @GetMapping("/customers/{customerId}/loans")
+    public List<LoanDTO> getLoansByCustomerId(@PathVariable Long customerId) {
+        return loanService.getLoansByCustomerId(customerId);
     }
 
 }

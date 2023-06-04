@@ -59,4 +59,11 @@ public class TransactionController {
         transactionService.deleteTransaction(transactionId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/transactions/{accountNumber}")
+    public List<TransactionDTO> getTransactionsByAccountNumber(@PathVariable String accountNumber) {
+        return transactionService.getAllTransactionsByAccountNumber(accountNumber);
+    }
+
+
 }
