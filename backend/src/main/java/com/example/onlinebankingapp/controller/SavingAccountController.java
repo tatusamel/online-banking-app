@@ -29,8 +29,8 @@ public class SavingAccountController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SavingAccountDTO>> listAllAccounts() {
-        List<SavingAccountDTO> accountDTOS = accountService.listAllAccounts()
+    public ResponseEntity<List<SavingAccountDTO>> getAll() {
+        List<SavingAccountDTO> accountDTOS = accountService.getAll()
                 .stream()
                 .map(savingAccountDTOConverter::convertToDto)
                 .collect(Collectors.toList());

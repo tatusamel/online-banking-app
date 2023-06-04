@@ -27,7 +27,7 @@ public class LoanService {
         this.accountService = accountService;
     }
 
-    public List<Loan> listAllLoans() {
+    public List<Loan> getAll() {
         return loanRepository.findAll();
     }
 

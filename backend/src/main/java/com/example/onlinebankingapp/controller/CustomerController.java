@@ -33,8 +33,8 @@ public class CustomerController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<CustomerDTO>> listAllCustomers(){
-        List<CustomerDTO> customerDTOS = customerService.listAllCustomers()
+    public ResponseEntity<List<CustomerDTO>> getAll(){
+        List<CustomerDTO> customerDTOS = customerService.getAll()
                 .stream().map(customerDTOConverter::convertToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(customerDTOS, HttpStatus.OK);

@@ -31,7 +31,7 @@ public class TransactionService {
         this.transactionDTOConverter = transactionDTOConverter;
     }
 
-    public List<Transaction> listAllTransactions() {
+    public List<Transaction> getAll() {
         return transactionRepository.findAll();
     }
 
@@ -99,6 +99,10 @@ public class TransactionService {
 
 
     public Double getTotalDepositsWithinPeriod(Date startDate, Date endDate) {
-        return transactionRepository.getTotalDepositsWithinPeriod(startDate, endDate);
+        return transactionRepository.findTotalDepositsWithinPeriod(startDate, endDate);
+    }
+
+    public List<Transaction> getDepositsWithinPeriod(Date startDate, Date endDate) {
+        return transactionRepository.findDepositsWithinPeriod(startDate, endDate);
     }
 }

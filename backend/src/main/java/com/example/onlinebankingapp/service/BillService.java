@@ -26,7 +26,7 @@ public class BillService {
         this.accountService = accountService;
     }
 
-    public List<Bill> listAllBills() {
+    public List<Bill> getAll() {
         return billRepository.findAll();
     }
 

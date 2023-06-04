@@ -18,4 +18,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Transactional
     @Query("SELECT a FROM Account a WHERE a.accountNumber = :accountNumber")
     Optional<Account> findAccountByAccountNumber(String accountNumber);
+
+    @Transactional
+    @Query("SELECT a FROM Account a WHERE a.branch.id = :branchId")
+    List<Account> findAccountsByBranchId(Long branchId);
 }

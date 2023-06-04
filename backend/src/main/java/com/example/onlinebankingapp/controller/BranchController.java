@@ -28,8 +28,8 @@ public class BranchController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BranchDTO>> listAllBranches() {
-        List<BranchDTO> branchDTOS = branchService.listAllBranches()
+    public ResponseEntity<List<BranchDTO>> getAll() {
+        List<BranchDTO> branchDTOS = branchService.getAll()
                 .stream().map(branchDTOConverter::convertToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(branchDTOS, HttpStatus.OK);

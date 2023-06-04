@@ -22,7 +22,7 @@ public class BranchService {
         this.branchRepository = branchRepository;
     }
 
-    public List<Branch> listAllBranches() {
+    public List<Branch> getAll() {
         return branchRepository.findAll();
     }
 

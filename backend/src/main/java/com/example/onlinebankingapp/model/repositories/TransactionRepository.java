@@ -20,5 +20,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Transactional
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.transactionType = 'DEPOSIT' AND t.transactionDate BETWEEN :startDate AND :endDate")
-    Double getTotalDepositsWithinPeriod(Date startDate, Date endDate);
+    Double findTotalDepositsWithinPeriod(Date startDate, Date endDate);
+
+    @Transactional
+    @Query("SELECT t FROM Transaction t WHERE t.transactionType = 'DEPOSIT' AND t.transactionDate BETWEEN :startDate AND :endDate")
+    List<Transaction> findDepositsWithinPeriod(Date startDate, Date endDate);
 }

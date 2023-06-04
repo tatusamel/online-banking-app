@@ -35,7 +35,7 @@ public class SavingAccountService {
         this.customerService = customerService;
     }
 
-    public List<SavingAccount> listAllAccounts() {
+    public List<SavingAccount> getAll() {
         return savingAccountRepository.findAll();
     }
 

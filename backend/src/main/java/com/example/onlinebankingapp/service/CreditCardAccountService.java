@@ -36,7 +36,7 @@ public class CreditCardAccountService {
         this.customerService = customerService;
     }
 
-    public List<CreditCardAccount> listAllAccounts() {
+    public List<CreditCardAccount> getAll() {
         return creditCardAccountRepository.findAll();
     }
 

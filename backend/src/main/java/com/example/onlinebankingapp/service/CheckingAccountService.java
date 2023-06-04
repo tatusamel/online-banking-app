@@ -36,7 +36,7 @@ public class CheckingAccountService {
         this.customerService = customerService;
     }
 
-    public List<CheckingAccount> listAllAccounts(){
+    public List<CheckingAccount> getAll(){
         return checkingAccountRepository.findAll();
     }
 

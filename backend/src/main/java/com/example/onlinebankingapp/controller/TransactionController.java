@@ -28,8 +28,8 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionDTO>> listAllTransactions() {
-        List<TransactionDTO> transactionDTOS = transactionService.listAllTransactions()
+    public ResponseEntity<List<TransactionDTO>> getAll() {
+        List<TransactionDTO> transactionDTOS = transactionService.getAll()
                 .stream()
                 .map(transactionDTOConverter::convertToDto)
                 .collect(Collectors.toList());

@@ -26,8 +26,8 @@ public class LoanController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LoanDTO>> listAllLoans() {
-        List<LoanDTO> loanDTOS =  loanService.listAllLoans()
+    public ResponseEntity<List<LoanDTO>> getAll() {
+        List<LoanDTO> loanDTOS =  loanService.getAll()
                 .stream()
                 .map(loanDTOConverter::convertToDto)
                 .collect(Collectors.toList());

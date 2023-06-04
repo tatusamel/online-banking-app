@@ -30,8 +30,8 @@ public class CreditCardAccountController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CreditCardAccountDTO>> listAllAccounts(){
-        List<CreditCardAccountDTO> accountDTOS = creditCardAccountService.listAllAccounts()
+    public ResponseEntity<List<CreditCardAccountDTO>> getAll(){
+        List<CreditCardAccountDTO> accountDTOS = creditCardAccountService.getAll()
                 .stream().map(creditCardAccountDTOConverter::convertToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(accountDTOS, HttpStatus.OK);

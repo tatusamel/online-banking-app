@@ -29,8 +29,8 @@ public class BillController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BillDTO>> listAllBills() {
-        List<BillDTO> billDTOS = billService.listAllBills()
+    public ResponseEntity<List<BillDTO>> getAll() {
+        List<BillDTO> billDTOS = billService.getAll()
                 .stream().map(billDTOConverter::convertToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(billDTOS, HttpStatus.OK);

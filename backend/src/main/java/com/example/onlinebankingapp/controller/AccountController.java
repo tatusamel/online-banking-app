@@ -33,7 +33,7 @@ public class AccountController {
 
     @GetMapping()
     public ResponseEntity<List<AccountDTO>> getAll() {
-        List<AccountDTO> accountDTOS = accountService.listAllAccounts()
+        List<AccountDTO> accountDTOS = accountService.getAll()
                 .stream().map(accountDTOConverter::convertToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(accountDTOS, HttpStatus.OK);

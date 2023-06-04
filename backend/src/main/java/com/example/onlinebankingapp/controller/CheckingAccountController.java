@@ -30,8 +30,8 @@ public class CheckingAccountController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CheckingAccountDTO>> listAllAccounts() {
-        List<CheckingAccountDTO> accounts = checkingAccountService.listAllAccounts()
+    public ResponseEntity<List<CheckingAccountDTO>> getAll() {
+        List<CheckingAccountDTO> accounts = checkingAccountService.getAll()
                 .stream().map(checkingAccountDTOConverter::convertToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(accounts, HttpStatus.OK);

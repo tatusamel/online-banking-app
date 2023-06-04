@@ -33,7 +33,7 @@ public class AccountService {
         this.accountDTOConverter = accountDTOConverter;
     }
 
-    public List<Account> listAllAccounts() {
+    public List<Account> getAll() {
         return accountRepository.findAll();
     }
 
@@ -42,31 +42,16 @@ public class AccountService {
     }
 
     public Account insertAccount(AccountRequest accountRequest) {
-        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
-        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
 
         Account newAccount = new Account();
-        newAccount.setAccountNumber(accountRequest.getAccountNumber());
-        newAccount.setBranch(branch);
-        newAccount.setCustomer(customer);
-        newAccount.setBalance(accountRequest.getBalance());
-        newAccount.setAccountType(AccountType.valueOf(accountRequest.getAccountType()));
-
+        mapRequestToAccount(accountRequest, newAccount);
         return accountRepository.save(newAccount);
 
     }
 
     public Account updateAccount(Long accountId, AccountRequest accountRequest) {
         Account accountToUpdate = this.getAccountById(accountId);
-        Customer customer = customerService.getCustomerById(accountRequest.getCustomerId());
-        Branch branch = branchService.getBranchById(accountRequest.getBranchId());
-
-        accountToUpdate.setBalance(accountRequest.getBalance());
-        accountToUpdate.setAccountNumber(accountRequest.getAccountNumber());
-        accountToUpdate.setCustomer(customer);
-        accountToUpdate.setBranch(branch);
-        accountToUpdate.setAccountType(AccountType.valueOf(accountRequest.getAccountType()));
-
+        mapRequestToAccount(accountRequest, accountToUpdate);
         return accountRepository.save(accountToUpdate);
 
     }
@@ -85,5 +70,22 @@ public class AccountService {
     public Account getAccountByAccountNumber(String accountNumber) {
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .orElseThrow( () -> new NoSuchElementException("No account with account number: " + accountNumber));
+    }
+
+    public List<Account> getAccountsByBranchId(Long branchId) {
+        return accountRepository.findAccountsByBranchId(branchId);
+    }
+
+    public Account mapRequestToAccount(AccountRequest request, Account account) {
+        Customer customer = customerService.getCustomerById(request.getCustomerId());
+        Branch branch = branchService.getBranchById(request.getBranchId());
+
+        account.setAccountNumber(request.getAccountNumber());
+        account.setBranch(branch);
+        account.setCustomer(customer);
+        account.setBalance(request.getBalance());
+        account.setAccountType(AccountType.valueOf(request.getAccountType()));
+
+        return account;
     }
 }
