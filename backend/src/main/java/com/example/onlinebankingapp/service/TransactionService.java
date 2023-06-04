@@ -102,8 +102,8 @@ public class TransactionService {
         accountService.saveAccount(toAccount);
 
         transaction.setAmount(request.getAmount());
-        transaction.setTransactionDate(request.getTransactionDate());
-        transaction.setTransactionType(TransactionType.valueOf(request.getTransactionType()));
+        transaction.setTransactionDate(new Date());
+        transaction.setTransactionType(TransactionType.DEPOSIT);
         transaction.setFromAccount(fromAccount);
         transaction.setToAccount(toAccount);
 

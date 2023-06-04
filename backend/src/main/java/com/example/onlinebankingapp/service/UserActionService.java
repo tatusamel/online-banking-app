@@ -6,6 +6,7 @@ import com.example.onlinebankingapp.model.repositories.UserActionRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.List;
 
 @Service
 public class UserActionService {
@@ -121,5 +122,13 @@ public class UserActionService {
         action.setAction("User with id: " + userId + " deleted his profile."
                 + " Date: " + new Date(System.currentTimeMillis()));
         return userActionRepository.save(action);
+    }
+
+    public List<UserAction> getAll() {
+        return userActionRepository.findAll();
+    }
+
+    public List<UserAction> getUserActionsByUserId(Long userId) {
+        return userActionRepository.getUserActionsByUserId(userId);
     }
 }

@@ -63,6 +63,7 @@ export const BranchesPage = () => {
       console.error(error);
       toast({
         title: 'An error occurred when deleting branch.',
+        description: '',
         status: 'error',
         duration: 3000,
         isClosable: true,

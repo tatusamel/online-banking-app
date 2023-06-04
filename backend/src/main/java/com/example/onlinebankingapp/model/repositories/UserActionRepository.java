@@ -15,5 +15,7 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
     List<UserAction> findTop10ByUserIdOrderByTimestampDesc(Long userId);
 
 
-
+    @Transactional
+    @Query("SELECT ua FROM UserAction ua WHERE ua.userId = :userId ORDER BY ua.timestamp DESC")
+    List<UserAction> getUserActionsByUserId(Long userId);
 }

@@ -41,7 +41,7 @@ public class TransactionController {
         return new ResponseEntity<>(transactionDTO, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/insert")
     public ResponseEntity<TransactionDTO> insertTransaction(@RequestBody TransactionRequest transactionRequest) {
         TransactionDTO transactionDTO = transactionDTOConverter.convertToDto(transactionService.createTransaction(transactionRequest));
         return new ResponseEntity<>(transactionDTO, HttpStatus.CREATED);
