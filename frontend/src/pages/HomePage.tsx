@@ -18,7 +18,7 @@ import {
   Tab,
 } from '@chakra-ui/react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
-import { AddIcon, SettingsIcon } from '@chakra-ui/icons';
+import { AddIcon, SettingsIcon, DeleteIcon } from '@chakra-ui/icons';
 import { MoneyTransferPage } from './MoneyTransferPage';
 
 import { BranchesPage } from './BranchesPage';
@@ -43,7 +43,26 @@ export const HomePage = () => {
   const userId = localStorage.getItem("userId");
   const isAdmin = userId === '1';
 
-  const handleAccountSettings = (accountId: any) => { };
+  const handleDeleteAccount = async (accountId: number) => {
+    try {
+      await axios.delete(`http://localhost:8080/accounts/delete/${accountId}`);
+      toast({
+        title: 'Account deleted successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      fetchAccounts(); // Refresh the accounts after successful deletion
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'An error occurred when deleting the account.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   useEffect(() => {
     fetchAccounts();
@@ -166,7 +185,7 @@ export const HomePage = () => {
             <Tab>Money Transfer</Tab>
             {isAdmin && <Tab>Branches</Tab>}
             {isAdmin && <Tab>Logs</Tab>}
-            {isAdmin && <Tab>Statistics</Tab> }
+            {isAdmin && <Tab>Statistics</Tab>}
           </TabList>
           {activeTabIndex === 0 && (
             <Box p={8}>
@@ -190,13 +209,13 @@ export const HomePage = () => {
                     <CardBody>
                       <Text>Balance: {balance}</Text>
                       <Text>Branch: {branchName}</Text>
-                      <Button
+                      <IconButton
+                        aria-label="Delete Account"
+                        colorScheme="red"
+                        icon={<DeleteIcon />}
                         size="sm"
-                        colorScheme="teal"
-                        onClick={() => handleAccountSettings(id)}
-                      >
-                        Account Settings
-                      </Button>
+                        onClick={() => handleDeleteAccount(id)}
+                      />
                     </CardBody>
                   </Card>
                 ))}
