@@ -53,6 +53,7 @@ export const StatisticsPage = () => {
 
     const handleOptionChange = (event: any) => {
         setSelectedOption(event.target.value);
+        setPageContent(null);
     };
 
     const handleRetrieveClick = async () => {
@@ -78,7 +79,6 @@ export const StatisticsPage = () => {
                 if (selectedOption.includes('{accountType}')) {
                     endpoint = endpoint.replaceAll('{accountType}', accountType.replaceAll(" ", "_").toUpperCase());
                 }
-                console.log(endpoint);
 
                 const response = await axios.get(endpoint);
                 setPageContent(response.data);
@@ -111,8 +111,6 @@ export const StatisticsPage = () => {
                 return <TotalBalanceOfAllAccountsPage content={pageContent} />;
             case 'accounts/total-balance/{customerId}':
                 return <TotalBalanceOfCustomerAccountsPage content={pageContent} />;
-            case 'transactions/most-transactions':
-                return <CustomersWithMostTransactionsPage content={pageContent} />;
             case 'branches/{branchId}/total-money':
                 return <TotalMoneyInBranchPage content={pageContent} />;
             case 'accounts/average-balance/{accountType}':
@@ -144,9 +142,6 @@ export const StatisticsPage = () => {
                     <option value="accounts/total-balance/{customerId}">
                         Find total balance of the accounts that a customer has
                     </option>
-                    <option value="transactions/most-transactions">
-                        Find customers with the highest number of transactions in the last 3 months
-                    </option>
                     <option value="branches/{branchId}/total-money">Find total money of the accounts in a branch</option>
                     <option value="accounts/average-balance/{accountType}">Find average balance per account type</option>
                     <option value="customers/{customerId}/transactions/top10">
@@ -161,7 +156,10 @@ export const StatisticsPage = () => {
             {selectedOption.includes("{customerId}") && (
                 <FormControl id="customerId">
                     <FormLabel>Customer Id</FormLabel>
-                    <Select value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
+                    <Select value={customerId} onChange={(e) => {
+                        setCustomerId(e.target.value);
+                        setPageContent(null);
+                    }}>
                         <option value="">Select an option</option>
                         {customers.map(({ id }) => (
                             <option key={id} value={id}>
@@ -174,8 +172,11 @@ export const StatisticsPage = () => {
             {selectedOption.includes("{branchId}") && (
                 <FormControl id="branch" mb={4}>
                     <FormLabel>Branch</FormLabel>
-                    <Select value={branchId} onChange={(e) => setBranchId(e.target.value)}>
-                    <option value="">Select an option</option>
+                    <Select value={branchId} onChange={(e) => {
+                        setBranchId(e.target.value);
+                        setPageContent(null);
+                    }}>
+                        <option value="">Select an option</option>
                         {branches.map(({ id, name }) => (
                             <option key={id} value={id}>
                                 {name}
@@ -187,8 +188,11 @@ export const StatisticsPage = () => {
             {selectedOption.includes("{accountType}") && (
                 <FormControl id="accountType" mb={4}>
                     <FormLabel>Account Type</FormLabel>
-                    <Select value={accountType} onChange={(e) => setAccountType(e.target.value)}>
-                    <option value="">Select an option</option>
+                    <Select value={accountType} onChange={(e) => {
+                        setAccountType(e.target.value);
+                        setPageContent(null);
+                    }}>
+                        <option value="">Select an option</option>
                         <option value="Checking Account">Checking Account</option>
                         <option value="Saving Account">Savings Account</option>
                         <option value="Credit Card Account">Credit Card Account</option>
@@ -210,16 +214,13 @@ const TotalBalanceOfAllAccountsPage = ({ content }: { content: any }) => (
 const TotalBalanceOfCustomerAccountsPage = ({ content }: { content: any }) => (
     <div>Total Balance of Customer Accounts: {content}</div>
 );
-const CustomersWithMostTransactionsPage = ({ content }: { content: any }) => (
-    <div>Customers with Most Transactions: {content}</div>
-);
 const TotalMoneyInBranchPage = ({ content }: { content: any }) => <div>Total Money in Branch: {content}</div>;
 const AverageBalancePerAccountTypePage = ({ content }: { content: any }) => (
     <div>Average Balance per Account Type: {content}</div>
 );
 const RecentTransactionsByCustomerPage = ({ content }: { content: any }) => {
-    if (!content || content.length === 0) {
-      return <div>No recent transactions found.</div>;
+    if (!content || !Array.isArray(content) || content.length === 0) {
+      return <div>Select a Customer.</div>;
     }
   
     return (
@@ -227,7 +228,7 @@ const RecentTransactionsByCustomerPage = ({ content }: { content: any }) => {
         <div>Recent Transactions by Customer:</div>
         {content.map((transaction: any) => (
           <div key={transaction.id}>
-            <br></br>
+            <br />
             <div>ID: {transaction.id}</div>
             <div>Amount: {transaction.amount}</div>
             <div>Transaction Date: {transaction.transactionDate}</div>

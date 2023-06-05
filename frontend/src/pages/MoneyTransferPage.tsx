@@ -102,7 +102,6 @@ export const MoneyTransferPage = () => {
         amount: transferAmount,
       };
       // Perform the money transfer
-      console.log(data);
       const response = await axios.post('http://localhost:8080/transactions/insert', data);
 
       // Display success toast and reset form inputs

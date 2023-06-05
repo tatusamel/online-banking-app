@@ -64,10 +64,4 @@ public class TransactionController {
     public List<TransactionDTO> getTransactionsByAccountNumber(@PathVariable String accountNumber) {
         return transactionService.getAllTransactionsByAccountNumber(accountNumber);
     }
-
-    @GetMapping("/most-transactions")
-    public List<CustomerDTO> getMostTransactions() {
-        return transactionService.getCustomersWithTheMostNumberOfTransactions();
-    }
-
 }

@@ -20,8 +20,6 @@ services:
     environment:
       MYSQL_DATABASE: $DB_NAME
       MYSQL_ROOT_PASSWORD: $DB_PASSWORD
-    volumes:
-      - oba-db-volume:/var/lib/mysql
     healthcheck:
       test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES;"
       interval: 2s

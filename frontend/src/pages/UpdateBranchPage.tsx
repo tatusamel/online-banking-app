@@ -27,7 +27,6 @@ export const UpdateBranchPage: React.FC<UpdateBranchPageProps> = ({ branchId }) 
   useEffect(() => {
     const fetchBranch = async () => {
       try {
-        console.log(branchId);
         const response = await axios.get(`http://localhost:8080/branches/${branchId}`);
         setName(response.data.name);
         setAddress(response.data.address);

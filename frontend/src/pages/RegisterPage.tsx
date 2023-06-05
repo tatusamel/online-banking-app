@@ -49,9 +49,7 @@ export const RegisterPage = () => {
     e.preventDefault();
 
     try {
-      console.log(formData);
       const response = await axios.post('http://localhost:8080/customers/insert', formData);
-      console.log(response.data);
 
       registerToast();
       navigate('/login');

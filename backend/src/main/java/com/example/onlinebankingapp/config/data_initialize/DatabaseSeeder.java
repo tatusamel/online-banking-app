@@ -68,8 +68,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         Customer customer = new Customer();
         customer.setFirstName("John");
         customer.setLastName("Doe");
-        customer.setEmail("a@a");
-        customer.setPassword(passwordEncoder.encode("a"));
+        customer.setEmail("admin@admin");
+        customer.setPassword(passwordEncoder.encode("admin"));
         customer.setPhone("123");
         customer.setAddress("terme");
         customerRepository.save(customer);
@@ -77,8 +77,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         Customer c2 = new Customer();
         c2.setFirstName("Serhat");
         c2.setLastName("Gundem");
-        c2.setEmail("b@b");
-        c2.setPassword(passwordEncoder.encode("b"));
+        c2.setEmail("serhat@gundem");
+        c2.setPassword(passwordEncoder.encode("serhat"));
         c2.setPhone("123");
         c2.setAddress("samsun");
         customerRepository.save(c2);

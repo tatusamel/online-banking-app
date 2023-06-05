@@ -91,7 +91,6 @@ export const AddAccountPage = () => {
       }
 
       // Send the account creation request to the backend
-      console.log(accountRequest);
       const response = await axios.post(endpoint, accountRequest);
 
       // Display success toast and reset the form fields

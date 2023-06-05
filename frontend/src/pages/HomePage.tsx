@@ -27,12 +27,12 @@ import { LogsPage } from './LogsPage';
 import { StatisticsPage } from './StatisticsPage';
 
 interface UserAccount {
-    id: number;
-    accountNumber: string;
-    accountType: string;
-    balance: number;
-    branchName: string;
-  }
+  id: number;
+  accountNumber: string;
+  accountType: string;
+  balance: number;
+  branchName: string;
+}
 
 export const HomePage = () => {
   const formBackground = useColorModeValue('gray.100', 'gray.700');
@@ -41,8 +41,9 @@ export const HomePage = () => {
   const [userAccounts, setUserAccounts] = useState<UserAccount[]>([]);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const userId = localStorage.getItem("userId");
+  const isAdmin = userId === '1';
 
-  const handleAccountSettings = (accountId:any) => {};
+  const handleAccountSettings = (accountId: any) => { };
 
   useEffect(() => {
     fetchAccounts();
@@ -68,16 +69,16 @@ export const HomePage = () => {
       const branches_dict: { [id: number]: string } = branches.reduce((acc: { [id: number]: string }, item: any) => {
         acc[item.id] = item.name;
         return acc;
-      }, {}); 
+      }, {});
       const response = await axios.get(`http://localhost:8080/customers/${userId}/accounts`);
       const accounts = response.data;
 
       const mergedAccounts = accounts.flat().map(
         (account: any) => {
-            return {
-                ...account,
-                branchName: branches_dict[account.branchId],
-            }
+          return {
+            ...account,
+            branchName: branches_dict[account.branchId],
+          }
         }
       );
       setUserAccounts(mergedAccounts);
@@ -163,9 +164,9 @@ export const HomePage = () => {
           <TabList>
             <Tab>User Accounts</Tab>
             <Tab>Money Transfer</Tab>
-            <Tab>Branches</Tab>
-            <Tab>Logs</Tab>
-            <Tab>Statistics</Tab>
+            {isAdmin && <Tab>Branches</Tab>}
+            {isAdmin && <Tab>Logs</Tab>}
+            {isAdmin && <Tab>Statistics</Tab> }
           </TabList>
           {activeTabIndex === 0 && (
             <Box p={8}>
@@ -180,7 +181,7 @@ export const HomePage = () => {
                     Add Account
                   </Button>
                 </Flex>
-                {userAccounts.map(({id, accountNumber, accountType, balance, branchName}) => (
+                {userAccounts.map(({ id, accountNumber, accountType, balance, branchName }) => (
                   <Card key={id} p={4}>
                     <CardHeader>
                       <Text>Account Number: {accountNumber}</Text>
@@ -203,9 +204,9 @@ export const HomePage = () => {
             </Box>
           )}
           {activeTabIndex === 1 && <MoneyTransferPage />}
-          {activeTabIndex === 2 && <BranchesPage />}
-          {activeTabIndex === 3 && <LogsPage />}
-          {activeTabIndex === 4 && <StatisticsPage/>}
+          {isAdmin && activeTabIndex === 2 && <BranchesPage />}
+          {isAdmin && activeTabIndex === 3 && <LogsPage />}
+          {isAdmin && activeTabIndex === 4 && <StatisticsPage />}
         </Tabs>
       </Box>
     </Flex>
